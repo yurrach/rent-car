@@ -1,0 +1,42 @@
+.contacts {
+  &__text {
+    color: #ffffff;
+    margin-right: 20px;
+    font-size: 16px;
+  }
+
+  &__paragraph {
+    display: flex;
+    align-items: center;
+  }
+
+  &__phones {
+    &_color {
+      &_velcom {
+        color: yellow;
+      }
+      &_mts {
+        color: red;
+      }
+    }
+  }
+}
+
+.logo {
+  margin-right: auto;
+}
+
+.mat-toolbar-row {
+  height: auto;
+  padding: 10px 20px;
+  align-items: center;
+
+  &:first-child {
+    border-bottom: solid #fff 1px;
+  }
+}
+.mat-slide-toggle {
+  margin-left: auto;
+  margin-right: 20px;
+  height: auto;
+}

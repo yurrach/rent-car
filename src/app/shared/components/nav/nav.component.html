@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">
+
+  <mat-toolbar-row>
+    <div class="logo">
+      <img src="../../../../assets/img/logo-s.png" alt="">
+    </div>
+    <div class="contacts__text">
+      <p class="contacts__paragraph">
+        <mat-icon>location_on</mat-icon>
+        <span>ул. Притыцкого, дом 60, корпус 5 </span>
+      </p>
+      <p class="contacts__paragraph">
+        <mat-icon>access_time</mat-icon>
+        <span>с 9:00 до 20:00 ежедневно</span>
+      </p>
+    </div>
+    <div class="contacts__phones">
+      <p class="contacts__paragraph">
+        <mat-icon class="contacts__phones_color_velcom">phone_android</mat-icon>
+        <a href="tel:+375296842020" class="contacts phone">+375 (29) 684-20-20</a>
+      </p>
+      <p class="contacts__paragraph">
+        <mat-icon class="contacts__phones_color_mts">phone_iphone</mat-icon>
+        <a href="tel:+375336842020" class="contacts phone">+375 (33) 684-20-20</a>
+      </p>
+    </div>
+  </mat-toolbar-row>
+  <mat-toolbar-row>
+    <a mat-button routerLink=""><mat-icon >directions_car</mat-icon>RentCar</a>
+    <a mat-button routerLink="/cars">Cars</a>
+    <a mat-button disabled routerLink="/contacts">Contacts</a>
+    <a mat-button routerLink="/add-car">Add new car</a>
+    <mat-slide-toggle>BYN/USD</mat-slide-toggle>
+    <a mat-button>Login</a>
+  </mat-toolbar-row>
+
+</mat-toolbar>
+

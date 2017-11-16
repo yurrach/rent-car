@@ -1,0 +1,30 @@
+
+<form class="form" novalidate [formGroup]="myForm"
+      >
+  <fieldset class="card">
+    
+    <ng-container *ngFor="let item of carParams; let i=index">
+      <div class="form-group" *ngIf="item.list.length!==0">
+        <label>{{item.capName}}</label>
+        <select class="form-control" 
+                name={{item.name}}
+                formControlName={{item.name}}
+                [ngClass]="isValid(item.name)"
+                (change)="getNextList($event.target, i)"
+                >
+          <option value="">Please select an {{item.capName}}</option>
+          <option *ngFor="let option of item.list"
+                  [value]="option">
+                  {{option}}
+                </option>
+        </select>
+      </div>
+    </ng-container>
+  </fieldset>
+</form>
+
+
+<pre>
+  
+</pre>
+
