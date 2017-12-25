@@ -1,0 +1,34 @@
+<ul class="navbar-nav" >
+    <li class="nav-item"
+    *ngIf="auth.user | async; else guest">
+      <a class="nav-link" (click)="auth.signOut()">
+        Log out
+      </a>
+    </li>
+    <ng-template #guest>
+      <li class="nav-item" crayfDropdown
+          *ngIf="!(auth.user | async)">
+        <a class="nav-link dropdown-toggle">
+          Login
+        </a>
+        <div class="dropdown-menu">
+          <p class="dropdown-menu__text">Войти через:</p>
+          <p class="icon">
+            <a class="nav-link" (click)="auth.googleLogin()">
+              <i class="fa fa-google icon-enter" aria-hidden="true"></i>
+            </a>
+            <a class="nav-link" >
+              <i class="fa fa-facebook-square icon-enter" aria-hidden="true"></i>
+            </a>
+            <a class="nav-link" >
+              <i class="fa fa-github icon-enter" aria-hidden="true"></i>
+            </a>
+          </p>
+          <div class="dropdown-divider"></div>
+          <a class="nav-link">Зарегистрироваться</a>
+        </div>
+      </li>
+    </ng-template>
+</ul>
+
+

@@ -1,0 +1,68 @@
+.contacts {
+  align-items: center;
+  display: flex;
+  font-size: 16px;
+  color: floralwhite;
+  background-color: purple;
+  justify-content: space-between;
+  padding: .5rem 2rem;
+
+  &__paragraph {
+    align-items: center;
+    display: flex;
+  }
+
+  &__text {
+    
+    margin-right: 40px;
+  }
+
+  &__icon {
+    margin-right: 10px;
+  }
+}
+
+
+.logo {
+  margin-right: auto;
+}
+
+.navbar {
+  background-color: purple;
+  color: floralwhite;
+  padding: 0 1rem;
+
+  &-toggler {
+    color: floralwhite;
+  }
+}
+
+.navbar-nav {
+  cursor: pointer;
+}
+
+.active {
+  background: lighten(purple, 5);
+  border-radius: 10px;
+}
+
+.fa-bars {
+  font-size: 40px;
+}
+
+.nav-link {
+  padding-left: 10px;
+  &:hover {
+    background: lighten(purple, 20);
+    border-radius: 10px;
+  }
+}
+
+.open>.collapse {
+  display: block;
+  
+}
+
+
+
+

@@ -1,0 +1,36 @@
+.icon {
+  display: flex;
+  justify-content: space-around;
+}
+
+.icon-enter {
+  font-size: 25px;
+}
+.dropdown-item {
+  text-align: center;
+}
+
+.dropdown-menu {
+  left: auto;
+
+  &__text {
+    cursor: default;
+    text-align: center;
+  }
+}
+
+.open>.dropdown-menu {
+  display: block;
+  right: 0;
+}
+
+.nav-link {
+  padding-left: 10px;
+  &:hover {
+    background: lighten(purple, 20);
+    border-radius: 10px;
+  }
+}
+.navbar-nav {
+  cursor: pointer;
+}
