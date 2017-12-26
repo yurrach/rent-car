@@ -6,7 +6,10 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 
 import { DropdownDirective } from './directives/crayf-dropdown.directive';
-import { FirebaseApiService } from './services/firebase-api.service';
+import { FirebaseApiService } from './core/firebase-api.service';
+import { AuthService } from './core/auth.service';
+import { CarsService } from './services/cars.service';
+
 
 
 
@@ -24,6 +27,10 @@ import { FirebaseApiService } from './services/firebase-api.service';
     AngularFirestoreModule,
     AngularFireAuthModule
   ],
-  providers: [FirebaseApiService],
+  providers: [
+    FirebaseApiService,
+    AuthService,
+    CarsService
+  ]
 })
 export class SharedModule { }

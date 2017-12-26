@@ -1,0 +1,33 @@
+<div class="container" style="width: 80%;">
+  <div class="row" *ngIf="car" >
+    <div class="card col-5" >
+      <img class="card-img-top" src="{{car.model_images[0].url}}" alt="{{car.make_display}} {{car.model_name}}">
+    </div>
+    <div class="card col-7" >
+      <div class="card-body">
+        <h4 class="card-title">{{car.make_display}} {{car.model_name}}</h4>
+        <p class="card-text">Информация об автомобиле</p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">Марка: {{car.make_display}} {{car.model_name}}</li>
+        <li class="list-group-item">Год выпуска: {{car.model_year}}</li>
+        <li class="list-group-item">Трансмиссия: {{car.model_transmission_type}}</li>
+        <li class="list-group-item">Двигатель: {{car.model_engine_cc/1000 | number:'1.1-1'}} {{car.model_engine_fuel}}</li>
+        <li class="list-group-item">Расход топлива: {{car.model_lkm_mixed}}</li>
+        <li class="list-group-item">Количество мест: {{car.model_seats}}</li>
+        <li class="list-group-item">Кондиционер: {{car.model_conditioning? 'Есть' : 'Нет'}}</li>
+        <li class="list-group-item">Дополнительно: {{car.model_description}}</li>
+      </ul>
+      <div class="card-body">
+        <a routerLink="/cars" class="btn btn-primary">Back to cars page</a>
+        <a routerLink="/book" class="btn btn-success">Book this car</a>
+      </div>
+    </div>
+
+  </div>
+  <div class="row"
+  *ngIf="!car">
+    LOADING
+  </div>
+
+</div> 

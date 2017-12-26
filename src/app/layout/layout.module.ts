@@ -7,6 +7,11 @@ import { HomePageComponent } from './home-page/home-page.component';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { SharedModule } from '../shared/shared.module';
 import { AuthComponent } from './shared/components/auth/auth.component';
+import { CarsPageComponent } from './cars-page/cars-page.component';
+import { CarsFilterComponent } from './cars-page/cars-filter/cars-filter.component';
+import { CarsListComponent } from './cars-page/cars-list/cars-list.component';
+import { CarItemComponent } from './cars-page/car-item/car-item.component';
+import { CarItemDetailsComponent } from './cars-page/car-item-details/car-item-details.component';
 
 
 
@@ -20,7 +25,12 @@ import { AuthComponent } from './shared/components/auth/auth.component';
     LayoutComponent,
     HomePageComponent,
     HeaderComponent,
-    AuthComponent
+    AuthComponent,
+    CarsPageComponent,
+    CarsFilterComponent,
+    CarsListComponent,
+    CarItemComponent,
+    CarItemDetailsComponent
   ],
   providers: [
   ]

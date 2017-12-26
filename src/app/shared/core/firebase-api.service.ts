@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument } from 'angularfire2/firestore';
+import * as firebase from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
 
 @Injectable()
@@ -7,36 +8,37 @@ export class FirebaseApiService {
 
   constructor(public afs: AngularFirestore) { }
 
-  public getCollectionRef<T>(path: string, orderName: string, orderDirection): AngularFirestoreCollection<T> {
+  // tslint:disable-next-line:max-line-length
+  public getCollectionRef<T>(path: string, orderName: string, orderDirection?: firebase.firestore.OrderByDirection): AngularFirestoreCollection<T> {
     return this.afs.collection(path, ref => ref.orderBy(orderName, orderDirection));
   }
 
-  public getCollection$<T>(path: string, orderName: string, orderDirection): Observable<T[]> {
+  public getCollection$<T>(path: string, orderName: string, orderDirection = 'asc' as any): Observable<T[]> {
     const collection = this.getCollectionRef(path, orderName, orderDirection);
     return collection.snapshotChanges()
       .map(changes => {
         return changes.map(a => {
-          const data = a.payload.doc.data();
-          data.id = a.payload.doc.id;
-          return data as T;
+          const data: T = a.payload.doc.data() as T;
+          data['id'] = a.payload.doc.id;
+          return data;
         });
       });
   }
 
-  public getDocRef<T>(path: string, data: any): AngularFirestoreDocument<T> {
-    return this.afs.doc(`${path}/${data.id}`);
+  public getDocRef<T>(path: string, data: T): AngularFirestoreDocument<T> {
+    return this.afs.doc(`${path}/${data['id']}`);
   }
 
-  public getDocById$<T>(path: string, id: any): Observable<T> {
+  public getDocById$<T>(path: string, id: string): Observable<T> {
     return this.afs.doc(`${path}/${id}`).snapshotChanges()
       .map(changes => {
-        const data = changes.payload.data();
-        data.id = changes.payload.id;
-        return data as T;
+        const data: T = changes.payload.data() as T;
+        data['id'] = changes.payload.id;
+        return data;
       });
   }
 
-  public createDoc(path: string, orderName: string, orderDirection, data: any) {
+  public createDoc<T>(path: string, orderName: string, orderDirection, data: T) {
     return this.getCollectionRef(path, orderName, orderDirection).add(data);
   }
 
