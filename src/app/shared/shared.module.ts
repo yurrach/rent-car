@@ -9,6 +9,8 @@ import { DropdownDirective } from './directives/crayf-dropdown.directive';
 import { FirebaseApiService } from './core/firebase-api.service';
 import { AuthService } from './core/auth.service';
 import { CarsService } from './services/cars.service';
+import { CarStarRatingService } from './services/car-star-rating.service';
+
 
 
 
@@ -30,7 +32,8 @@ import { CarsService } from './services/cars.service';
   providers: [
     FirebaseApiService,
     AuthService,
-    CarsService
+    CarsService,
+    CarStarRatingService
   ]
 })
 export class SharedModule { }

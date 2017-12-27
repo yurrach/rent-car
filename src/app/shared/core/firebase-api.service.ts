@@ -49,5 +49,10 @@ export class FirebaseApiService {
     return this.getDocRef(path, data).delete();
   }
 
+  public whereSearchInCollection<T>(path, searchParam, sign, currentParam) {
+    return this.afs.collection<T>(path, ref => ref
+      .where(searchParam, sign, currentParam));
+  }
+
 }
 

@@ -1,7 +1,7 @@
 <div class="card" style="height: 100%; width: 100%;">
   <span *ngIf="carItem.model_sale" class="badge badge-success">Sale 10%</span>
-  <img class="card-img-top" [src]="carItem.model_images[0]?.url" alt="Card image cap">
   <span *ngIf="carItem.model_new" class="badge badge-info">New</span>
+  <img class="card-img-top" [src]="carItem.model_images[0]?.url" alt="Card image cap">
   <div class="card-body">
     <a [routerLink]="['/cars', carItem.id]">
       <h5 class="card-title">{{carItem.make_display}} {{carItem.model_name}}</h5>

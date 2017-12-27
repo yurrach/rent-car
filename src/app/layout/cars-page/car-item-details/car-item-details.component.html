@@ -1,9 +1,14 @@
-<div class="container" style="width: 80%;">
+<div class="container" >
   <div class="row" *ngIf="car" >
-    <div class="card col-5" >
+    <div class="card col-6" >
       <img class="card-img-top" src="{{car.model_images[0].url}}" alt="{{car.make_display}} {{car.model_name}}">
+      <crayf-car-star-rating [carId]="car.id"></crayf-car-star-rating>
+      <div class="card-body">
+        <a routerLink="/cars" class="btn btn-primary">Back</a>
+        <a routerLink="/book" class="btn btn-success">Book this car</a>
+      </div>
     </div>
-    <div class="card col-7" >
+    <div class="card col-6" >
       <div class="card-body">
         <h4 class="card-title">{{car.make_display}} {{car.model_name}}</h4>
         <p class="card-text">Информация об автомобиле</p>
@@ -18,10 +23,8 @@
         <li class="list-group-item">Кондиционер: {{car.model_conditioning? 'Есть' : 'Нет'}}</li>
         <li class="list-group-item">Дополнительно: {{car.model_description}}</li>
       </ul>
-      <div class="card-body">
-        <a routerLink="/cars" class="btn btn-primary">Back to cars page</a>
-        <a routerLink="/book" class="btn btn-success">Book this car</a>
-      </div>
+      
+
     </div>
 
   </div>

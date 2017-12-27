@@ -53,4 +53,7 @@ export class AuthService {
       this.router.navigate(['/']);
     });
   }
+  get userId() {
+    return this.afAuth.auth.currentUser.uid;
+  }
 }

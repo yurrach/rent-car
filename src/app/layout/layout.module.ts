@@ -12,6 +12,8 @@ import { CarsFilterComponent } from './cars-page/cars-filter/cars-filter.compone
 import { CarsListComponent } from './cars-page/cars-list/cars-list.component';
 import { CarItemComponent } from './cars-page/car-item/car-item.component';
 import { CarItemDetailsComponent } from './cars-page/car-item-details/car-item-details.component';
+import { CarStarRatingComponent } from './cars-page/car-star-rating/car-star-rating.component';
+
 
 
 
@@ -30,7 +32,8 @@ import { CarItemDetailsComponent } from './cars-page/car-item-details/car-item-d
     CarsFilterComponent,
     CarsListComponent,
     CarItemComponent,
-    CarItemDetailsComponent
+    CarItemDetailsComponent,
+    CarStarRatingComponent
   ],
   providers: [
   ]
