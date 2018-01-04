@@ -1,14 +1,57 @@
-.card {
-  position: relative;
+@import '../../../../_smart-grid';
+@import '../../../../_params';
+
+:host {
+    @include col;
+    @include size(3);
+    @include size-lg(4);
+    @include size-sm(6);
+    @include size-xs(8);
+
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border-radius: 15px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+    
+  }
+  .card {
+    
+    &__img {
+      border-radius: 15px;
+      width: 100%;
+      
+    }
+    &__body {
+      padding-top: 10px;
+      margin: auto 10px 10px 10px;
+    }
+    &__title {
+      font-weight: bold;
+
+    }
+    &__text {
+      padding-top: 5px;
+
+    }
+  }
+  .badge {
+    position: absolute;
+    color: aliceblue;
+    display: inline-block;
+    border-radius: 15px;
+    padding: 5px 15px;
+    &_sale {
+      top: 0;
+      background: $color-primary;
+    }
+    &_new {
+      top: 0;
+      right: 0;
+      background: $color-secondary;
+    }
 }
 
-.badge-success {
-  position: absolute;
-  top: 0;
-}
 
-.badge-info {
-  position: absolute;
-  top: 0;
-  right: 0;
-}

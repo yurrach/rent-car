@@ -9,8 +9,9 @@ const routes: Routes = [
 
   {
     path: '', component: LayoutComponent, children: [
-      { path: '', component: HomePageComponent, pathMatch: 'full' },
-      { path: 'cars', component: CarsPageComponent },
+      { path: '', redirectTo: '/home', pathMatch: 'full' },
+      { path: 'home', component: HomePageComponent, pathMatch: 'full' },
+      { path: 'cars', component: CarsPageComponent},
       { path: 'cars/:id', component: CarItemDetailsComponent },
 /*    { path: 'info', component: InfoPageComponent },
       { path: 'contacts', component: ContactsPageComponent } */

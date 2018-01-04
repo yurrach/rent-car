@@ -1,3 +1,11 @@
-.card-deck {
-  margin: 10px;
+@import '../../../../_smart-grid';
+@import '../../../../_params';
+
+
+.row {
+  @include row-flex;
+  @include xs-block {
+    justify-content: center;
+
+  }
 }

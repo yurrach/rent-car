@@ -1,8 +1,11 @@
 
-<div class="container-fluid">
-  <div class="row">
-    <crayf-cars-filter class="col-sm-2"></crayf-cars-filter>
-    <crayf-cars-list [carsList]="carsList"
-    class="col-sm-10"></crayf-cars-list>
+<div class="cars">
+  <div class="wrapper">
+    <div class="row">
+      <crayf-cars-filter class="cars__filter"></crayf-cars-filter>
+      <crayf-cars-list [carsList]="carsList"
+      class="cars__list"></crayf-cars-list>
+    </div>
   </div>
-</div>
+
+</div> 
