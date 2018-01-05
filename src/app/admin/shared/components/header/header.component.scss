@@ -1,0 +1,38 @@
+
+
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  &__brand {
+    padding: 20px 50px;
+  }
+  &__toggler {
+    display: none;
+
+  }
+  &__collapse {
+    padding-right: 10px;
+    margin-left: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  &__search {
+    padding-right: 20px;
+
+  }
+  &__nav {
+
+  }
+  &__item {
+
+  }
+  &__link {
+    cursor: pointer;
+
+  }
+}
+.dropdown {
+  display: none;
+}

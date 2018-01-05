@@ -26,7 +26,7 @@ export class FirebaseApiService {
   }
 
   public getDocRef<T>(path: string, data: T): AngularFirestoreDocument<T> {
-    return this.afs.doc(`${path}/${data['id']}`);
+    return this.afs.doc(`${path}/${data['uid']}`);
   }
 
   public getDocById$<T>(path: string, id: string): Observable<T> {
@@ -43,7 +43,7 @@ export class FirebaseApiService {
   }
 
   public updateDoc<T>(path: string, data: T) {
-    return this.getDocRef(path, data).set(data as T);
+    return this.getDocRef(path, data).set(data as T, {merge: true});
   }
   public deleteDoc<T>(path: string, data: T) {
     return this.getDocRef(path, data).delete();

@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <a class="navbar__brand">Admin panel</a>
+  <button class="navbar__toggler" type="button" >
+    <i class="fa fa-bars"></i>
+  </button>
+  <div class="navbar__collapse">
+    <form #searchForm="ngForm" class="navbar__search" novalidate>
+      <input
+      class="search__input"
+      type="text"
+      placeholder="Search"
+      name="search"
+      [(ngModel)]="search"
+      >
+      <button class="search__btn" type="submit">Search</button>
+    </form>
+    <ul class="navbar__nav">
+      <li class="navbar__item">
+        <a class="navbar__link" (click) = "auth.signOut()">Log out</a>
+      </li>
+    </ul>
+  </div>
+</nav>

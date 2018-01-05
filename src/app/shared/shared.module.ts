@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 
@@ -16,6 +16,7 @@ import { CarStarRatingService } from './services/car-star-rating.service';
 
 
 
+
 @NgModule({
   declarations: [DropdownDirective],
   imports: [
@@ -25,6 +26,7 @@ import { CarStarRatingService } from './services/car-star-rating.service';
   ],
   exports: [
     ReactiveFormsModule,
+    FormsModule,
     DropdownDirective,
     AngularFirestoreModule,
     AngularFireAuthModule

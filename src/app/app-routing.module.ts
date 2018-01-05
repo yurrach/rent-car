@@ -5,8 +5,7 @@ import { NotFoundComponent } from './shared/components/not-found/not-found.compo
 
 const routes: Routes = [
   { path: '', loadChildren: './layout/layout.module#LayoutModule' },
-  // TODO create admin module
-  /* { path: 'admin', loadChildren: './admin/admin.module#AdminModule' }, */
+  { path: 'admin', loadChildren: './admin/admin.module#AdminModule' },
   { path: 'not-found', component: NotFoundComponent },
   { path: '**', redirectTo: 'not-found' }
 ];

@@ -1,0 +1,63 @@
+<form class="form" novalidate
+(ngSubmit)="onSubmit()"
+
+[formGroup]="carForm">
+<fieldset (change)="onControlChange($event.target)">
+    <div class="form__group">
+    <label class="form__label" for="year">Год выпуска:</label>
+    <select class="form__control" formControlName="year"
+    (change)="onYearChange()"
+    name="year" id="year">
+      <option value="null">Укажите год выпуска</option>
+      <option *ngFor="let year of yearsList" value="{{year}}">{{year}}</option>
+    </select>
+  </div>
+  <div class="form__group" *ngIf="makesList$ | async">
+    <label class="form__label" for="make">Марка:</label>
+    <select class="form__control" formControlName="make"
+    (change)="onMakeChange()"
+    name="make" id="make">
+      <option value="null">Укажите марку</option>
+      <option *ngFor="let make of makesList$ | async" value="{{make}}">{{make}}</option>
+    </select>
+  </div>
+  <div class="form__group" *ngIf="modelsList$ | async">
+    <label class="form__label" for="model">Модель:</label>
+    <select class="form__control" formControlName="model"
+    (change)="onModelChange()"
+    name="model" id="model">
+      <option value="null">Укажите модель</option>
+      <option *ngFor="let model of modelsList$ | async" value="{{model}}">{{model}}</option>
+    </select>
+  </div>
+  <div class="form__group" *ngIf="trimsList$ | async">
+    <label class="form__label" for="trim">Комплектация:</label>
+    <select class="form__control" formControlName="trim"
+    (change)="onTrimChange()"
+    name="trim" id="trim">
+      <option value="null">Укажите комплектацию</option>
+      <option *ngFor="let trim of trimsList$ | async" value="{{trim}}">{{trim}}</option>
+    </select>
+  </div>
+</fieldset>
+
+  <div *ngIf="carForm.controls.trim.value">
+    <div class="form__group" >
+      <label class="form__label" for="isSale">Скидка:</label>
+      <input formControlName="isSale"
+      class="form__control" type="checkbox"
+      name="isSale" id="isSale">
+    </div>
+    <div class="form__group" formArrayName="carImages">
+      <label class="form__label" for="carImages">Добавить изображение:</label>
+      <input *ngFor="let image of carImages.controls; let i = index"
+      class="form__control" type="file"
+      name="carImages" id="carImages"
+      formControlName="{{i}}">
+    </div>
+  </div> 
+</form>
+
+<pre>
+  {{carForm.value | json}}
+</pre>

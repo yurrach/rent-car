@@ -1,0 +1,22 @@
+.sidebar {
+  &__link {
+    color: rgb(68, 69, 70);
+    padding: 20px 50px;
+    display: block;
+    &:hover {
+      background: darken(red, 4);
+    }
+    &.active {
+      color: #f6f6f6;
+
+    }
+
+    
+  }
+  &__icon {
+
+  }
+}
+
+
+

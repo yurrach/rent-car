@@ -17,6 +17,7 @@ export class AuthService {
     //// Get auth data, then get firestore user document || null
     this.user = this.afAuth.authState
       .switchMap(user => {
+        // console.log(user.uid);
         if (user) {
           // return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
           return this.getUseById(user.uid);
@@ -46,11 +47,12 @@ export class AuthService {
       displayName: user.displayName,
       photoURL: user.photoURL
     };
+    console.log(data);
     return this.fbs.updateDoc('users', data);
   }
   signOut() {
     this.afAuth.auth.signOut().then(() => {
-      this.router.navigate(['/']);
+      this.router.navigate(['/cars']);
     });
   }
   get userId() {

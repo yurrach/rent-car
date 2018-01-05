@@ -46,6 +46,9 @@
           <li class="nav__item">
             <a class="nav__link" routerLink="/contacts" routerLinkActive="active">Contacts</a>
           </li>
+          <li *ngIf="isAdmin" class="nav__item">
+            <a class="nav__link" routerLink="/admin" routerLinkActive="active">Admin</a>
+          </li>
           <li class="nav__item auth"
           *ngIf="auth.user | async; else guest">
           <a class="nav__link" (click)="auth.signOut()">

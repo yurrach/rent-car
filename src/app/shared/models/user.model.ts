@@ -4,4 +4,9 @@ export class User {
   photoURL?: string;
   displayName?: string;
   favoriteColor?: string;
+  roles?: {
+    admin?: boolean,
+    editor?: boolean,
+    subscriber?: boolean
+  };
 }

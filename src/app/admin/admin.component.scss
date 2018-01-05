@@ -1,0 +1,32 @@
+@import '../../_params';
+@import '../../_smart-grid';
+
+.admin {
+  // background: $color-primary;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+  &__header {
+    background: #cecece;
+    
+  }
+
+  &__main {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1 auto;
+    align-content: flex-start;
+  }
+  
+  &__sidebar {
+    background: #cecece;
+    flex: 1 1 auto;
+    
+  }
+  
+  &__content {
+    // background: orange;
+    flex: 1000 1 auto;
+  }
+}
