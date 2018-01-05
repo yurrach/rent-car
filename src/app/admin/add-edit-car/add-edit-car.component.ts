@@ -19,6 +19,12 @@ export class AddEditCarComponent implements OnInit {
   modelsList$: Observable<string[]>;
   trimsList$: Observable<string[]>;
   isTrimSelected = false;
+  optionsListObj = {
+    year: this.yearsList,
+    make: this.makesList$,
+    model: this.modelsList$,
+    trim: this.trimsList$
+  };
 
 
   constructor(
@@ -32,33 +38,50 @@ export class AddEditCarComponent implements OnInit {
     
 
   }
-  resetForm(name) {
+
+  resetForm(ctrlArr, index) {
+    const resetValue = {};
+    ctrlArr.forEach((ctrl, i) => {
+      if (i <= index) {
+        resetValue[ctrl] = this.carForm.controls[ctrl].value;
+      }
+    })
+
+    this.carForm.reset(resetValue);
 
   }
+  resetOptionsList(index) {
+    const optArr = Object.keys(this.optionsListObj);
+    optArr.forEach((opt, i) => {
+      if (i > index) {
+        this[`${opt}sList$`] = Observable.of(null);
+
+      }
+    })
+
+
+  }
+
   onControlChange({ name }) {
-    this.resetForm(name);
-
-
     const ctrlArr = Object.keys(this.carForm.controls);
     const index = ctrlArr.indexOf(name);
-    const value = {};
-    for (let i = 0; i <=index; i++) {
-      value[ctrlArr[i]] = this.carForm.controls[ctrlArr[i]].value;
-      
-    }
+    
+
     if (this.carForm.controls[ctrlArr[index + 1]].value) {
-      this.carForm.reset(value);
+      this.resetForm(ctrlArr, index);
+      this.resetOptionsList(index);
+
+    }
+    if (name === 'trim') {
+      return;
     }
     const listName = {
       year: 'make_display',
       make: 'model_name',
       model: 'model_trim',
     };
-    const varia = ctrlArr[index + 1] + 'sList$';
-    if (name === 'trim') {
-      return;
-    }
-    this[varia] = this.getListFromApi(listName[name]);
+    const observableListName = ctrlArr[index + 1] + 'sList$';
+    this[observableListName] = this.getListFromApi(listName[name]);
   }
 
   onSubmit() {
@@ -68,17 +91,17 @@ export class AddEditCarComponent implements OnInit {
   onYearChange() {
     if (this.carForm.controls.make.value) {
       // this.carForm.reset({ year: this.carForm.controls.year.value });
-      this.makesList$ = Observable.of(null);
-      this.modelsList$ = Observable.of(null);
-      this.trimsList$ = Observable.of(null);
+      // this.makesList$ = Observable.of(null);
+      // this.modelsList$ = Observable.of(null);
+      // this.trimsList$ = Observable.of(null);
       
     }
     // this.getMakesList();
   }
   onMakeChange() {
     if (this.carForm.controls.model.value) {
-      this.modelsList$ = Observable.of(null);
-      this.trimsList$ = Observable.of(null);
+      // this.modelsList$ = Observable.of(null);
+      // this.trimsList$ = Observable.of(null);
 /*       this.carForm.reset({
         year: this.carForm.controls.year.value,
         make: this.carForm.controls.make.value
@@ -89,25 +112,20 @@ export class AddEditCarComponent implements OnInit {
   }
   onModelChange() {
     if (this.carForm.controls.trim.value) {
-      this.trimsList$ = Observable.of(null);
-/*       this.carForm.reset({
-        year: this.carForm.controls.year.value,
-        make: this.carForm.controls.make.value,
-        model: this.carForm.controls.model.value
-      }); */
+      // this.trimsList$ = Observable.of(null);
 
     }
-    // this.getTrimsList();
+
   }
 
   onTrimChange() {
 
-      this.carForm.reset({
-        year: this.carForm.controls.year.value,
-        make: this.carForm.controls.make.value,
-        model: this.carForm.controls.model.value,
-        trim: this.carForm.controls.trim.value
-      });
+      // this.carForm.reset({
+      //   year: this.carForm.controls.year.value,
+      //   make: this.carForm.controls.make.value,
+      //   model: this.carForm.controls.model.value,
+      //   trim: this.carForm.controls.trim.value
+      // });
       this.isTrimSelected = true;
 
   }
