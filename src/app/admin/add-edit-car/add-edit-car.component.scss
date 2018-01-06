@@ -17,19 +17,29 @@
     flex: 0 1 300px;
     
   }
+  &__alert {
+    padding-left: 320px;
+    color: red;
+  }
   &__control {
     width: 50%;
     flex: 1 1 300px;
-/*     padding: 5px;
+    /*     padding: 5px;
     border-radius: 5px;
     outline:none; */
-
+    
     padding: 6px 0 4px 10px;
     border: 1px solid #cecece;
     background: #F6F6f6;
     border-radius: 8px;
     outline:none;
-  
+    
+    &.ng-touched.ng-invalid {
+      border-left: 4px solid red;
+    }
+    &.ng-valid {
+      border-left: 4px solid lightgreen;
+    }
     &_textarea {
       height: 5rem;
     }

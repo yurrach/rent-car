@@ -6,38 +6,47 @@
     <div class="form__group">
     <label class="form__label" for="year">Год выпуска:</label>
     <select class="form__control" formControlName="year"
-    (change)="onYearChange()"
     name="year" id="year">
-      <option value="null">Укажите год выпуска</option>
+      <option value="">Укажите год выпуска</option>
       <option *ngFor="let year of yearsList" value="{{year}}">{{year}}</option>
     </select>
   </div>
-  <div class="form__group" *ngIf="makesList$ | async">
+  <div class="form__alert" *ngIf="isInvalid('year')">
+    Поле должно быть заполнено
+  </div>
+  <div class="form__group" 
+  *ngIf="carForm.controls.year.value && makesList$ | async">
     <label class="form__label" for="make">Марка:</label>
     <select class="form__control" formControlName="make"
-    (change)="onMakeChange()"
     name="make" id="make">
-      <option value="null">Укажите марку</option>
+      <option value="">Укажите марку</option>
       <option *ngFor="let make of makesList$ | async" value="{{make}}">{{make}}</option>
     </select>
+  </div>
+    <div class="form__alert" *ngIf="isInvalid('make')">
+    Поле должно быть заполнено
   </div>
   <div class="form__group" *ngIf="modelsList$ | async">
     <label class="form__label" for="model">Модель:</label>
     <select class="form__control" formControlName="model"
-    (change)="onModelChange()"
     name="model" id="model">
-      <option value="null">Укажите модель</option>
+      <option value="">Укажите модель</option>
       <option *ngFor="let model of modelsList$ | async" value="{{model}}">{{model}}</option>
     </select>
+  </div>
+    <div class="form__alert" *ngIf="isInvalid('model')">
+    Поле должно быть заполнено
   </div>
   <div class="form__group" *ngIf="trimsList$ | async">
     <label class="form__label" for="trim">Комплектация:</label>
     <select class="form__control" formControlName="trim"
-    (change)="onTrimChange()"
     name="trim" id="trim">
-      <option value="null">Укажите комплектацию</option>
+      <option value="">Укажите комплектацию</option>
       <option *ngFor="let trim of trimsList$ | async" value="{{trim}}">{{trim}}</option>
     </select>
+  </div>
+  <div class="form__alert" *ngIf="isInvalid('trim')">
+    Поле должно быть заполнено
   </div>
 </fieldset>
 
@@ -57,7 +66,7 @@
     </div>
   </div> 
 </form>
-
 <pre>
   {{carForm.value | json}}
 </pre>
+
