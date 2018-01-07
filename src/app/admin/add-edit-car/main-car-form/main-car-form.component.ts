@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { AdminCarService } from '../../shared/services/admin-car.service';
+import { CarSelectFormControl } from '../../shared/models/car-form-control';
+import { CarFormDataService } from '../../shared/services/car-form-data.service';
 
 @Component({
   selector: 'crayf-main-car-form',
@@ -11,40 +13,16 @@ import { AdminCarService } from '../../shared/services/admin-car.service';
 export class MainCarFormComponent implements OnInit {
   mainCarForm: FormGroup;
   @Output() onMainCarFormValid = new EventEmitter<FormGroup>();
-
-  carMainParams = [
-    {
-      name: 'year',
-      optionsList$: Observable.of(null),
-      placeholder: 'Укажите год выпуска',
-      label: 'Год выпуска:',
-    },
-    {
-      name: 'make',
-      optionsList$: Observable.of(null),
-      placeholder: 'Укажите марку',
-      label: 'Марка:',
-    },
-    {
-      name: 'model',
-      optionsList$: Observable.of(null),
-      placeholder: 'Укажите модель',
-      label: 'Модель:',
-    },
-    {
-      name: 'trim',
-      optionsList$: Observable.of(null),
-      placeholder: 'Укажите комплектацию',
-      label: 'Комплектация:',
-    },
-  ];
+  carMainParams: Array<CarSelectFormControl>;
 
   constructor(
     private adminCarService: AdminCarService,
     private fb: FormBuilder,
+    private carFormDataService: CarFormDataService,
   ) {}
 
   ngOnInit() {
+    this.carMainParams = this.carFormDataService.carMainFormControls;
     this.carMainParams[0].optionsList$ = this.getYearsList(2000);
     this.createMainCarForm();
   }

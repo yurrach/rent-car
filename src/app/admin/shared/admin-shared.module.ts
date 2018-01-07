@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AdminCarService } from './services/admin-car.service';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
+import { CarFormDataService } from './services/car-form-data.service';
 
 
 @NgModule({
@@ -12,7 +13,8 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
   ],
   declarations: [],
   providers: [
-    AdminCarService
+    AdminCarService,
+    CarFormDataService
   ]
 })
 export class AdminSharedModule { }
