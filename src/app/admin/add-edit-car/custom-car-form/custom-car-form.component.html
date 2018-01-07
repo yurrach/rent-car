@@ -1,0 +1,40 @@
+<fieldset [formGroup]="customCarForm">
+  <div class="form__group">
+    <label class="form__label" for="isNew">
+      Новинка:
+    </label>
+    <input formControlName="isNew" class="form__control" type="checkbox" name="isNew" id="isNew">
+  </div>
+  <div class="form__group">
+    <label class="form__label" for="isAirConditioning">
+      Кондиционер:
+    </label>
+    <input formControlName="isAirConditioning" #isSale class="form__control" type="checkbox" name="isAirConditioning" id="isAirConditioning">
+  </div>
+  <div class="form__group">
+    <label class="form__label" for="isSale">
+      Скидка:
+    </label>
+    <input formControlName="isSale" #isSale class="form__control" type="checkbox" name="isSale" id="isSale">
+  </div>
+  <div class="form__group" *ngIf="isSale.checked">
+    <label class="form__label" for="saleAmount">
+      Величина скидки %:
+    </label>
+    <input formControlName="saleAmount" class="form__control" type="text" name="saleAmount" id="saleAmount">
+  </div>
+  <div class="form__group">
+    <label class="form__label" for="pricing">
+      Цена:
+    </label>
+    <input formControlName="pricing" class="form__control" type="text" name="pricing" id="pricing">
+  </div>
+  <div class="form__group">
+    <label class="form__label">
+      Дополнительная информация:
+    </label>
+    <textarea class="form__control form__control_textarea" formControlName="additionalInfo" name="additionalInfo">
+      Напишите дополнительные данные
+    </textarea>
+  </div>
+</fieldset>

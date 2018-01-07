@@ -31,7 +31,7 @@
     border-radius: 8px;
     outline: none;
 
-    &.ng-touched.ng-invalid {
+    &.ng-invalid {
       border-left: 4px solid red;
     }
     &.ng-valid {
@@ -66,9 +66,5 @@
 
   &_reset {
     background: red;
-  }
-  &:disabled {
-    background: #fff;
-    cursor: not-allowed;
   }
 }

@@ -8,6 +8,9 @@ import { CarsComponent } from './cars/cars.component';
 import { AddEditCarComponent } from './add-edit-car/add-edit-car.component';
 import { SharedModule } from '../shared/shared.module';
 import { AdminSharedModule } from './shared/admin-shared.module';
+import { MainCarFormComponent } from './add-edit-car/main-car-form/main-car-form.component';
+import { ApiCarFormComponent } from './add-edit-car/api-car-form/api-car-form.component';
+import { CustomCarFormComponent } from './add-edit-car/custom-car-form/custom-car-form.component';
 
 @NgModule({
   imports: [
@@ -16,6 +19,6 @@ import { AdminSharedModule } from './shared/admin-shared.module';
     SharedModule,
     AdminSharedModule
   ],
-  declarations: [AdminComponent, HeaderComponent, SidebarComponent, CarsComponent, AddEditCarComponent]
+  declarations: [AdminComponent, HeaderComponent, SidebarComponent, CarsComponent, AddEditCarComponent, MainCarFormComponent, ApiCarFormComponent, CustomCarFormComponent]
 })
 export class AdminModule { }

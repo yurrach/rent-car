@@ -14,15 +14,8 @@ import { CarItemComponent } from './cars-page/car-item/car-item.component';
 import { CarItemDetailsComponent } from './cars-page/car-item-details/car-item-details.component';
 import { CarStarRatingComponent } from './cars-page/car-star-rating/car-star-rating.component';
 
-
-
-
 @NgModule({
-  imports: [
-    CommonModule,
-    LayoutRoutingModule,
-    SharedModule
-  ],
+  imports: [CommonModule, LayoutRoutingModule, SharedModule],
   declarations: [
     LayoutComponent,
     HomePageComponent,
@@ -33,9 +26,8 @@ import { CarStarRatingComponent } from './cars-page/car-star-rating/car-star-rat
     CarsListComponent,
     CarItemComponent,
     CarItemDetailsComponent,
-    CarStarRatingComponent
+    CarStarRatingComponent,
   ],
-  providers: [
-  ]
+  providers: [],
 })
-export class LayoutModule { }
+export class LayoutModule {}

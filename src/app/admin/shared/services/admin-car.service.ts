@@ -6,6 +6,7 @@ import 'rxjs/add/operator/publishLast';
 
 @Injectable()
 export class AdminCarService {
+  currentCar: [any];
 
   constructor(
     private http: HttpClient
@@ -28,9 +29,14 @@ export class AdminCarService {
 
     return this.http.jsonp(baseApiUrl + query[listName], jsonpCallback)
       .map(res => {
-        console.log('change');  
         const paramsArray: [any] = Object.values(res)[0];
+        if (listName==='model_trim') {
+          this.currentCar = paramsArray;
+        }
       return paramsArray.map(param => param[listName]);
       }).publishLast().refCount();
+  }
+  getCarParamsByTrim(trim) {
+    return this.currentCar.filter(car => car['model_trim'] === trim)[0];
   }
 }

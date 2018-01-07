@@ -1,0 +1,25 @@
+<fieldset [formGroup]="mainCarForm"
+          >
+  <ng-container *ngFor="let carMainParam of carMainParams; let i = index">
+    <div *ngIf="(i==0||mainCarForm.controls[carMainParams[i-1].name].value)&&carMainParam.optionsList$ | async"
+          class="form__group">
+      <label class="form__label" for="{{carMainParam.name}}">
+        {{carMainParam.label}}
+      </label>
+      <select class="form__control"
+              formControlName="{{carMainParam.name}}"
+              name="{{carMainParam.name}}"
+              id="{{carMainParam.name}}"
+              (change)="onControlChange($event.target, i)">
+        <option value="">{{carMainParam.placeholder}}</option>
+        <option *ngFor="let option of carMainParam.optionsList$ | async"
+                value="{{option}}">
+          {{option}}
+        </option>
+      </select>
+      <div class="form__alert" *ngIf="isInvalid(carMainParam.name)">
+        Поле должно быть заполнено
+      </div>
+    </div>
+  </ng-container>
+</fieldset>
