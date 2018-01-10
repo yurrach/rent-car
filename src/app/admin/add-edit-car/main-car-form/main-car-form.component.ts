@@ -32,12 +32,13 @@ export class MainCarFormComponent implements OnInit {
     this.onMainCarFormValid.emit(this.mainCarForm);
 
     if (name === 'trim') {
-      if (this.mainCarForm.valid) {
-      }
       return;
     }
-    const nextCarParam = this.carMainParams[i + 1];
-    if (this.mainCarForm.controls[nextCarParam.name].value) {
+
+    const nextIndex = i + 1;
+    const nextCarParam = this.carMainParams[nextIndex];
+    const nextControl = this.mainCarForm.controls[nextCarParam.name];
+    if (nextControl.value) {
       for (let index = i + 1; index < this.carMainParams.length; index++) {
         const curParam = this.carMainParams[index];
         this.mainCarForm.controls[curParam.name].reset('');
