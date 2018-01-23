@@ -2,39 +2,49 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/publishLast';
-
+import 'rxjs/add/operator/delay';
 
 @Injectable()
 export class AdminCarService {
   currentCar: [any];
 
-  constructor(
-    private http: HttpClient
-  ) { }
+  constructor(private http: HttpClient) {}
 
-  getCarParamsList$({ year, make, model }, listName) {
-    Observable
-    const baseApiUrl = `https://www.carqueryapi.com/api/0.3/?callback=JSONP_CALLBACK&cmd=get`;
-
-    const jsonpCallback = `JSONP_CALLBACK`;
-    const makeQuery = 'Makes&year=' + year;
-    const modelQuery = 'Models&year=' + year + '&make=' + make;
-    const trimQuery = 'Trims&year='+year+'&make='+make+'&model='+model;
-    const query = {
-      'make_display': makeQuery,
-      'model_name': modelQuery,
-      'model_trim': trimQuery
+  getQueryUrl({ year, make, model }) {
+    const baseApiUrl = `https://www.carqueryapi.com/api/0.3/?cmd=`;
+    let query = '';
+    let cmd = '';
+    if (year) {
+      query = '&year=' + year;
+      cmd = 'getMakes';
     }
-    // const query = model ? trimQuery : make ? modelQuery : makeQuery;
+    if (make) {
+      query += '&make=' + make;
+      cmd = 'getModels';
+    }
+    if (model) {
+      query += '&model=' + model;
+      cmd = 'getTrims';
+    }
 
-    return this.http.jsonp(baseApiUrl + query[listName], jsonpCallback)
+    return baseApiUrl + cmd + query;
+  }
+
+  getCarParamsList$(url, listName) {
+    const jsonpCallback = `callback`;
+
+    return this.http
+      .jsonp(url, jsonpCallback)
       .map(res => {
         const paramsArray: [any] = Object.values(res)[0];
-        if (listName==='model_trim') {
+        if (listName === 'model_trim') {
           this.currentCar = paramsArray;
         }
-      return paramsArray.map(param => param[listName]);
-      }).publishLast().refCount();
+        return paramsArray.map(param => param[listName]);
+      })
+      .delay(500)
+      .publishLast()
+      .refCount();
   }
   getCarParamsByTrim(trim) {
     return this.currentCar.filter(car => car['model_trim'] === trim)[0];

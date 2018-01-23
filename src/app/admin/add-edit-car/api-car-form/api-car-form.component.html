@@ -1,9 +1,0 @@
-<fieldset [formGroup]="apiCarForm">
-  <div class="form__group" *ngFor="let carApiParam of carApiParamsArr">
-    <label class="form__label" for="{{carApiParam.name}}">
-      {{carApiParam.label}}
-    </label>
-    <input formControlName="{{carApiParam.name}}" class="form__control" type="text" name="{{carApiParam.name}}" id="{{carApiParam.name}}"
-      placeholder="{{carApiParam.placeholder}}">
-  </div>
-</fieldset>
