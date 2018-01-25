@@ -1,10 +1,156 @@
 @import 'params';
 @import 'smart-grid';
 
-
 @include reset;
 
 .wrapper {
   @include wrapper;
 }
 
+.form {
+  /* border: 1px solid black; */
+  margin: 10px 30px;
+  /* box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  border-radius: 15px; */
+
+  &__group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 10px 20px;
+  }
+  &__array {
+    display: flex;
+    border: 1px solid black;
+    &:not(:last-child) {
+      border-bottom: 1px solid transparent;
+    }
+  }
+  &__label {
+    width: 30%;
+    flex: 0 1 300px;
+  }
+  &__alert {
+    padding-left: 320px;
+    color: red;
+  }
+  &__control {
+    width: 50%;
+    flex: 1 1 300px;
+    /*     padding: 5px;
+    border-radius: 5px;
+    outline:none; */
+
+    padding: 6px 0 4px 10px;
+    border: 1px solid #cecece;
+    background: #f6f6f6;
+    border-radius: 8px;
+    outline: none;
+
+    &.ng-touched.ng-invalid {
+      border-left: 4px solid red;
+    }
+    &.ng-valid {
+      border-left: 4px solid lightgreen;
+    }
+    &_textarea {
+      height: 5rem;
+    }
+  }
+  &__btn {
+    text-align: center;
+  }
+}
+.btn {
+  display: inline-block;
+  padding: 5px 20px;
+  margin: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  /*   width: 90px;
+  height: 28px; */
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #666;
+  border-radius: 5px;
+  box-shadow: inset 0 2px 2px #ccc;
+  cursor: pointer;
+
+  &_submit {
+    background: greenyellow;
+  }
+
+  &_reset {
+    background: red;
+  }
+  &:disabled {
+    background: #fff;
+    cursor: not-allowed;
+  }
+}
+
+.loader {
+  text-align: center;
+}
+
+.array {
+  &__content {
+    flex: 1 1 600px;
+  }
+
+  &__btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+.car-images {
+  &__heading {
+  }
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 100px;
+  }
+  &__group {
+    align-self: center;
+  }
+  &__preview {
+    position: relative;
+    width: 150px;
+    margin: 10px;
+    &:hover .car-images__delete {
+      opacity: 1;
+    }
+    &:hover .car-images__default {
+      opacity: 1;
+    }
+  }
+  &__img {
+    display: inline-block;
+    width: 100%;
+  }
+  &__btn {
+    padding: 10px;
+    border: 1px solid black;
+  }
+  &__input {
+    display: none;
+  }
+  &__delete {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  &__default {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+.default {
+  opacity: 0.5;
+}

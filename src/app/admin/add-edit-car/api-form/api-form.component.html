@@ -1,0 +1,13 @@
+<fieldset [formGroup]="apiCarForm" *ngIf="apiCarForm" 
+          >
+  <ng-container *ngFor="let param of getApiValidParams(); let i = index">
+    <div 
+          class="form__group">
+    <label class="form__label" for="{{param.name}}">
+      {{param.label}}
+    </label>
+    <input formControlName="{{param.name}}" class="form__control" type="text" name="{{param.name}}" id="{{param.name}}"
+      placeholder="{{param.placeholder}}">
+  </div>
+  </ng-container>
+</fieldset>

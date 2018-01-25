@@ -11,7 +11,6 @@ import { Observable } from 'rxjs/Observable';
 export class FirebaseApiService {
   constructor(public afs: AngularFirestore) {}
 
-  // tslint:disable-next-line:max-line-length
   public getCollectionRef<T>(
     path: string,
     orderName: string,

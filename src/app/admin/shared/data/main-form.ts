@@ -9,7 +9,7 @@ const year: CarFormParam = {
   label: 'Год выпуска:',
   value: '',
   validators: [Validators.required],
-  optionsList$: getYearsList$(2000),
+  optionsList$: Observable.of(null),
   listName: '',
 };
 const make: CarFormParam = {
@@ -42,12 +42,5 @@ const trim: CarFormParam = {
   optionsList$: Observable.of(null),
   listName: 'model_trim',
 };
-function getYearsList$(startYear): Observable<number[]> {
-  const yearsList = [];
-  const endYear = new Date().getFullYear();
-  for (let i = startYear; i <= endYear; i++) {
-    yearsList.push(i);
-  }
-  return Observable.of(yearsList);
-}
+
 export const mainCarFormParams: CarFormParam[] = [year, make, model, trim];

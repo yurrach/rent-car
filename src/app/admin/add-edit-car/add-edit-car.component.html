@@ -1,99 +1,20 @@
-<form class="form" novalidate (ngSubmit)="onSubmit()" [formGroup]="carForm">
-  <fieldset formGroupName="mainCarForm">
-    <ng-container *ngFor="let param of mainCarFormParams; let i = index">
-      <div *ngIf="param.optionsList$ | async"
-            class="form__group">
-        <label class="form__label" for="{{param.name}}">
-          {{param.label}}
-        </label>
-        <select class="form__control"
-                formControlName="{{param.name}}"
-                name="{{param.name}}"
-                id="{{param.name}}"
-                (change)="onControlChange($event.target, i)">
-          <option value="">{{param.placeholder}}</option>
-          <option *ngFor="let option of param.optionsList$ | async"
-                  value="{{option}}">
-            {{option}}
-          </option>
-        </select>
-        <div class="form__alert" *ngIf="false">
-          Поле должно быть заполнено
-        </div>
-      </div>
-    </ng-container>
-  </fieldset>
-  <fieldset formGroupName="apiCarForm" *ngIf="apiCarForm" 
-            (click)="onApiFormChange()">
-    <ng-container *ngFor="let param of getValidApiList(); let i = index">
-      <div 
-            class="form__group">
-      <label class="form__label" for="{{param.name}}">
-        {{param.label}}
-      </label>
-      <input formControlName="{{param.name}}" class="form__control" type="text" name="{{param.name}}" id="{{param.name}}"
-        placeholder="{{param.placeholder}}">
-    </div>
-    </ng-container>
-  </fieldset>
-  <fieldset formGroupName="customCarForm" *ngIf="customCarForm">
-    <ng-container *ngFor="let param of getValidCustomList(); let i = index">
-      <div *ngIf="param.type==='checkbox'"
-          class="form__group">
-        <label class="form__label" for="{{param.name}}">
-          {{param.label}}
-        </label>
-        <input formControlName="{{param.name}}"
-              class="form__control"
-              type="{{param.type}}"
-              name="{{param.name}}"
-              id="{{param.name}}">
-      </div>
-
-    </ng-container>
-
-<!--     <div class="form__group">
-      <label class="form__label" for="isAirConditioning">
-        Кондиционер:
-      </label>
-      <input formControlName="isAirConditioning" #isSale class="form__control" type="checkbox" name="isAirConditioning" id="isAirConditioning">
-    </div>
-    <div class="form__group">
-      <label class="form__label" for="isSale">
-        Скидка:
-      </label>
-      <input formControlName="isSale" #isSale class="form__control" type="checkbox" name="isSale" id="isSale">
-    </div> -->
-    <div class="form__group" *ngIf="true">
-      <label class="form__label" for="saleAmount">
-        Величина скидки %:
-      </label>
-      <input formControlName="saleAmount" class="form__control" type="text" name="saleAmount" id="saleAmount">
-    </div>
-    <div class="form__group">
-      <label class="form__label" for="pricing">
-        Цена:
-      </label>
-      <input formControlName="pricing" class="form__control" type="text" name="pricing" id="pricing">
-    </div>
-    <div class="form__group">
-      <label class="form__label">
-        Дополнительная информация:
-      </label>
-      <textarea class="form__control form__control_textarea" formControlName="additionalInfo" name="additionalInfo">
-        Напишите дополнительные данные
-      </textarea>
-    </div>
-  </fieldset>
-  <div class="form__btn" *ngIf="customCarForm">
-    <button class="btn btn_submit" type="submit" [disabled]="!carForm.valid">
+<form class="form" novalidate >
+  <crayf-main-form (onLoading)="loading=$event"
+                    (onMainFormFilled)="onMainFormChanged($event)"
+                    ></crayf-main-form>
+  <crayf-api-form *ngIf="isMainCarFormValid"
+  [apiCarParams]="apiCarParams"
+  (onApiFormFilled)="onApiFormChanged($event)"></crayf-api-form>
+  <crayf-custom-form 
+  *ngIf="isMainCarFormValid&&isApiCarFormValid">
+  </crayf-custom-form>
+  <div class="form__btn" *ngIf="isMainCarFormValid&&isApiCarFormValid">
+    <button class="btn btn_submit" type="submit">
       Сохранить
     </button>
-    <button class="btn btn_reset" type="reset" (click)="onReset()">
+    <button class="btn btn_reset" (click)="onReset()">
       Сбросить форму
     </button>
   </div>
 </form>
-<div class="loader" *ngIf="loading">
-  <img src="../../../assets/img/loader.gif">
-</div>
+

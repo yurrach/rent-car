@@ -47,6 +47,14 @@ export class AdminCarService {
       .refCount();
   }
   getCarParamsByTrim(trim) {
-    return this.currentCar.filter(car => car['model_trim'] === trim)[0];
+    const params = this.currentCar.filter(car => car['model_trim'] === trim)[0];
+    return {
+      drive: params.model_drive,
+      engineCc: params.model_engine_cc,
+      engineFuel: params.model_engine_fuel,
+      lkmMixed: params.model_lkm_mixed,
+      body: params.model_body,
+      seats: params.model_seats,
+    };
   }
 }
