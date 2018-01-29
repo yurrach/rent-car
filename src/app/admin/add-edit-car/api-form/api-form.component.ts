@@ -10,9 +10,11 @@ import { CarFormDataService } from '../../shared/services/car-form-data.service'
   styleUrls: ['./api-form.component.scss'],
 })
 export class ApiFormComponent implements OnInit {
+  currentCar;
   apiCarForm: FormGroup;
   apiCarFormParams: Array<CarFormParam>;
   @Input() apiCarParams;
+  @Input() currentTrim;
   @Output() onApiFormFilled = new EventEmitter<FormGroup>(true);
 
   constructor(
@@ -22,6 +24,14 @@ export class ApiFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    /* this.currentCar = {
+      drive: 'Front',
+      engineCc: '1560',
+      engineFuel: 'Front',
+      lkmMixed: '5.4',
+      body: 'Station Wagon',
+      seats: '5',
+    }; */
     this.apiCarFormParams = this.carFormDataService.apiCarFormParams;
     this.createApiCarForm();
     if (this.apiCarForm.valid) {
@@ -38,7 +48,12 @@ export class ApiFormComponent implements OnInit {
       this.apiCarFormParams,
     );
     this.apiCarForm = this.fb.group(apiConfig);
-    this.apiCarForm.patchValue(this.apiCarParams);
+    if (!this.currentCar) {
+      this.currentCar = this.carFormDataService.getCarParamsByTrim(
+        this.currentTrim,
+      );
+    }
+    this.apiCarForm.patchValue(this.currentCar || {});
   }
   getApiValidParams() {
     let show = true;

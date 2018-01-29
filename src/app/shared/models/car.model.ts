@@ -17,7 +17,42 @@ export class Car {
   model_images: any[];
   model_description: string;
   createdAt: Date;
+  constructor() {}
+}
+export class Car1 {
+  id?: string;
+  year: number;
+  make: string;
+  model: string;
+  trim: string;
+  transmissionType: string;
+  drive: string;
+  engineCc: number;
+  engineFuel: string;
+  lkmMixed: number;
+  body: string;
+  seats: number;
+  isNew: boolean;
+  isSale: boolean;
+  saleAmount?: number;
+  isAirConditioning: boolean;
+  rentPrice: [
+    {
+      duration: string;
+      price: number;
+    }
+  ];
+  images: [
+    {
+      id?: string;
+      name: string;
+      url: string;
+      isDefault: string;
+    }
+  ];
+  additionalInfo: string;
+  createdAt: Date;
   constructor() {
-
+    this.createdAt = new Date();
   }
 }

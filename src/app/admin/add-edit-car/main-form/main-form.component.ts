@@ -1,9 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-
-// import { mainCarFormParams } from '../../shared/data/main-form';
 import { FormGroup, FormBuilder } from '@angular/forms';
+
 import { CarFormParam } from '../../shared/models/car-form-param.model';
-import { AdminCarService } from '../../shared/services/admin-car.service';
 import { CarFormDataService } from '../../shared/services/car-form-data.service';
 import { Observable } from 'rxjs/Observable';
 
@@ -14,19 +12,33 @@ import { Observable } from 'rxjs/Observable';
 })
 export class MainFormComponent implements OnInit {
   loading = false;
-  @Output() onMainFormFilled = new EventEmitter<FormGroup>();
-  @Output() onMainFormChanged = new EventEmitter<Boolean>();
+  currentCar;
+  @Output() onMainFormFilled = new EventEmitter<FormGroup>(true);
   public mainCarForm: FormGroup;
   public mainCarFormParams: Array<CarFormParam>;
   constructor(
     private fb: FormBuilder,
-    private adminCarService: AdminCarService,
     private carFormDataService: CarFormDataService,
   ) {}
 
   ngOnInit() {
+    /* this.currentCar = {
+      year: 2005,
+      make: 'Citroen',
+      model: 'C5',
+      trim: 'Break',
+    }; */
     this.mainCarFormParams = this.carFormDataService.mainCarFormParams;
     this.createMainCarForm();
+    if (this.currentCar) {
+      this.mainCarForm.patchValue(this.currentCar);
+      this.mainCarFormParams.forEach(param => {
+        if (param.listName) {
+          param.optionsList$ = this.getListFromApi(param.listName);
+        }
+      });
+      // this.onMainFormFilled.emit(this.mainCarForm);
+    }
   }
 
   createMainCarForm() {
@@ -36,16 +48,12 @@ export class MainFormComponent implements OnInit {
     this.mainCarForm = this.fb.group(mainConfig);
   }
   onControlChange({ name }, i) {
-    /*     if (name === 'trim') {
-      return this.onMainFormFilled.emit(this.mainCarForm);
-    } */
     if (i < this.mainCarFormParams.length - 1) {
       this.loading = true;
       const nextIndex = i + 1;
       const nextCarParam = this.mainCarFormParams[nextIndex];
       const nextControl = this.mainCarForm.controls[nextCarParam.name];
       if (nextControl.value) {
-        this.onMainFormChanged.emit(true);
         for (
           let index = i + 1;
           index < this.mainCarFormParams.length;
@@ -75,8 +83,8 @@ export class MainFormComponent implements OnInit {
   }
 
   getListFromApi(listName) {
-    return this.adminCarService.getCarParamsList$(
-      this.adminCarService.getQueryUrl(this.mainCarForm.value),
+    return this.carFormDataService.getCarParamsList$(
+      this.mainCarForm.value,
       listName,
     );
   }

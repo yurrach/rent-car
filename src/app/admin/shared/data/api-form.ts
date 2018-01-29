@@ -10,6 +10,14 @@ const drive: CarFormParam = {
   value: '',
   validators: [Validators.required],
 };
+const transmissionType: CarFormParam = {
+  type: 'text',
+  name: 'transmissionType',
+  placeholder: 'Коробка передач',
+  label: 'Коробка передач:',
+  value: '',
+  validators: [Validators.required],
+};
 const engineCc: CarFormParam = {
   type: 'text',
   name: 'engineCc',
@@ -52,6 +60,7 @@ const seats: CarFormParam = {
 };
 
 export const apiCarFormParams: CarFormParam[] = [
+  transmissionType,
   drive,
   engineCc,
   engineFuel,

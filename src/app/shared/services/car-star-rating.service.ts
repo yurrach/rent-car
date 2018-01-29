@@ -1,20 +1,32 @@
 import { Injectable } from '@angular/core';
 import { FirebaseApiService } from '../core/firebase-api.service';
 import { CarStar } from '../models/car-star.model';
+import * as firebase from 'firebase/app';
 
 @Injectable()
 export class CarStarRatingService {
-
-  constructor(private fbs: FirebaseApiService) { }
+  constructor(private fbs: FirebaseApiService) {}
 
   getUserStars(userId) {
-    const starsRef = this.fbs.whereSearchInCollection('car-stars', 'userId', '==', userId);
+    /*     function userQueryFn(ref: firebase.firestore.CollectionReference) {
+      return ref.where('userId', '==', userId);
+    } */
+    const queryFn = this.fbs.queryFn('where', ['userId', '==', userId]);
+    const starsRef = this.fbs.getCollectionRef('car-stars', queryFn);
     return starsRef.valueChanges();
   }
 
   getCarStars(carId) {
-    const starsRef = this.fbs.whereSearchInCollection('car-stars', 'carId', '==', carId);
+    const starsRef = this.fbs.getCollectionRef(
+      'car-stars',
+      this.carIdQueryFn(carId),
+    );
     return starsRef.valueChanges();
+  }
+  carIdQueryFn(carId) {
+    return (ref: firebase.firestore.CollectionReference) => {
+      return ref.where('carId', '==', carId);
+    };
   }
 
   setStar(userId, carId, value) {
@@ -26,13 +38,14 @@ export class CarStarRatingService {
   getAvgCarRating(carId: string) {
     return this.getCarStars(carId).map((stars: CarStar[]) => {
       const ratings = stars.map((star: CarStar) => star.value);
-      const avgRating = ratings.length ? ratings.reduce((total, val) => total + val) / stars.length : 'not reviewed';
+      const avgRating = ratings.length
+        ? ratings.reduce((total, val) => total + val) / stars.length
+        : 'not reviewed';
       const votes = ratings.length ? ratings.length : null;
       return {
         avgRating,
-        votes
+        votes,
       };
     });
   }
-
 }

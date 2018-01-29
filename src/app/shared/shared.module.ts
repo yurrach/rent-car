@@ -10,6 +10,7 @@ import { FirebaseApiService } from './core/firebase-api.service';
 import { AuthService } from './core/auth.service';
 import { CarsService } from './services/cars.service';
 import { CarStarRatingService } from './services/car-star-rating.service';
+import { UploadService } from './core/upload.service';
 
 
 
@@ -35,7 +36,8 @@ import { CarStarRatingService } from './services/car-star-rating.service';
     FirebaseApiService,
     AuthService,
     CarsService,
-    CarStarRatingService
+    CarStarRatingService,
+    UploadService
   ]
 })
 export class SharedModule { }

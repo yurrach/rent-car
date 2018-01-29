@@ -3,13 +3,14 @@
                     (onMainFormFilled)="onMainFormChanged($event)"
                     ></crayf-main-form>
   <crayf-api-form *ngIf="isMainCarFormValid"
-  [apiCarParams]="apiCarParams"
+  [currentTrim]="currentTrim"
   (onApiFormFilled)="onApiFormChanged($event)"></crayf-api-form>
   <crayf-custom-form 
+  (onCustomFormFilled)="onCustomFormChanged($event)"
   *ngIf="isMainCarFormValid&&isApiCarFormValid">
   </crayf-custom-form>
-  <div class="form__btn" *ngIf="isMainCarFormValid&&isApiCarFormValid">
-    <button class="btn btn_submit" type="submit">
+  <div class="form__btn" *ngIf="isMainCarFormValid&&isApiCarFormValid&&isCustomCarFormValid">
+    <button class="btn btn_submit" type="submit" (click)="onSubmit()">
       Сохранить
     </button>
     <button class="btn btn_reset" (click)="onReset()">

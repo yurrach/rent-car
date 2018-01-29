@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import { FirebaseApiService } from '../core/firebase-api.service';
 import { Car } from '../models/car.model';
+import * as firebase from 'firebase/app';
 
 @Injectable()
 export class CarsService {
-
-  constructor(private fbs: FirebaseApiService) { }
+  constructor(public fbs: FirebaseApiService) {}
 
   getCars$() {
-    return this.fbs.getCollection$<Car>('cars', 'model_year', 'asc');
+    return this.fbs.getCollection$<Car>('cars', this.carQueryFn);
   }
 
   getCarById$(id) {
     return this.fbs.getDocById$('cars', id);
+  }
+  carQueryFn(ref: firebase.firestore.CollectionReference) {
+    return ref.orderBy('model_year', 'desc');
   }
 }
