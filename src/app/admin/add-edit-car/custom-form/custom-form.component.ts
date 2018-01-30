@@ -24,7 +24,7 @@ export class CustomFormComponent implements OnInit {
   @Input() customCar;
   customCarForm: FormGroup;
   previewImageSrc = [];
-  imageList: File[] = [];
+  imageFileList: File[] = [];
   uploadProgress = [];
   currentUpload: Upload[] = [];
   @Output() onCustomFormFilled = new EventEmitter<FormGroup>(true);
@@ -42,6 +42,9 @@ export class CustomFormComponent implements OnInit {
     });
     if (this.customCar) {
       this.customCarForm.patchValue(this.customCar);
+      this.customCar.images.forEach(image => {
+        this.previewImageSrc.push(image.url);
+      });
     }
   }
 
@@ -53,6 +56,7 @@ export class CustomFormComponent implements OnInit {
       saleAmount: [null],
       rentPrice: this.fb.array([]),
       images: this.fb.array([]),
+      fileImages: this.fb.array([]),
       additionalInfo: [null],
     });
     this.getDefaultRentPrice();
@@ -97,14 +101,21 @@ export class CustomFormComponent implements OnInit {
     const control = <FormArray>this.customCarForm.controls['rentPrice'];
     control.insert(i, this.initRentPriceRow());
   }
+  addImageFormArrayElem(file: File) {
+    const control = <FormArray>this.customCarForm.controls['fileImages'];
+    control.push(
+      this.fb.group({
+        file,
+        isDefault: false,
+      }),
+    );
+  }
 
   onImagesAdd(event) {
     const files: Array<File> = Array.prototype.slice.call(event.target.files);
     files.forEach((file: File) => {
       this.addImageToPreview(file);
-      this.addImageToFormArray(file);
-
-      this.imageList.push(file);
+      this.addImageFormArrayElem(file);
     });
   }
   addImageToPreview(file: File) {
@@ -114,36 +125,24 @@ export class CustomFormComponent implements OnInit {
       this.previewImageSrc.push(reader.result);
     };
   }
-  addImageToFormArray(file) {
-    const name = file.name;
-  }
   deleteImage(i) {
     this.previewImageSrc.splice(i, 1);
+    const control = <FormArray>this.customCarForm.controls['fileImages'];
+    control.removeAt(i);
   }
   setAsDefaultImage(currentIndex) {
     this.previewImageSrc.forEach((src, i) => {
       const previewImagesElem = this.elementRef.nativeElement.querySelectorAll(
         '.car-images__img',
       );
+      const control = <FormArray>this.customCarForm.controls['fileImages'];
+      const isDefault = control.controls[i].get('isDefault').value;
       if (i === currentIndex) {
-        previewImagesElem[i].classList.toggle('default');
+        control.controls[i].get('isDefault').setValue(!isDefault);
+        // previewImagesElem[i].classList.toggle('default');
         return;
       }
-      previewImagesElem[i].classList.remove('default');
-    });
-  }
-  onAddToStore() {
-    this.imageList.forEach((file: File, index) => {
-      // console.log(file);
-      this.currentUpload[index] = new Upload(file);
-      // console.log(upload);
-
-      this.uplService
-        .pushUpload('/cars', this.currentUpload[index])
-        .subscribe((snapshot: firebase.storage.UploadTaskSnapshot) => {
-          this.currentUpload[index].url = snapshot.downloadURL;
-          console.log(this.currentUpload[index]);
-        });
+      control.controls[i].get('isDefault').setValue(false);
     });
   }
 }

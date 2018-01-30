@@ -6,6 +6,8 @@ import { CarFormDataService } from '../shared/services/car-form-data.service';
 import { CarFormParam } from '../shared/models/car-form-param.model';
 import 'rxjs/add/operator/do';
 import { Car1 } from '../../shared/models/car.model';
+import * as firebase from 'firebase';
+import { zip } from 'rxjs/observable/zip';
 
 @Component({
   selector: 'crayf-add-edit-car',
@@ -19,10 +21,12 @@ export class AddEditCarComponent implements OnInit {
   isMainCarFormValid = false;
   isApiCarFormValid = false;
   isCustomCarFormValid = false;
+  isMainFormVisible = true;
   currentTrim;
   mainCar;
   apiCar;
   customCar;
+  upload$: [Observable<any>] = [null];
 
   private carImages: FormArray;
 
@@ -52,18 +56,44 @@ export class AddEditCarComponent implements OnInit {
   }
   onCustomFormChanged(customFormGroup: FormGroup) {
     this.isCustomCarFormValid = customFormGroup.valid;
-    this.apiCar = customFormGroup.value;
+    if (customFormGroup.valid) {
+      this.customCar = customFormGroup.value;
+      console.log(this.customCar);
+    }
   }
   onReset() {
     console.log('reset form');
   }
   onSubmit() {
-    const currentCar: Car1 = {
-      ...new Car1(),
-      ...this.mainCar,
-      ...this.apiCar,
-      ...this.customCar,
-    };
-    console.log(currentCar);
+    this.customCar.fileImages.forEach((image, i) => {
+      this.upload$[i] = this.adminCarService
+        .uploadCarImage(image.file)
+        .map(uploadTask => {
+          return {
+            name: uploadTask.metadata.name,
+            url: uploadTask.downloadURL,
+            isDefault: image.isDefault,
+          };
+        });
+    });
+    const imagesLinks = zip(...this.upload$);
+    imagesLinks.subscribe(res => {
+      delete this.customCar.fileImages;
+      const currentCar: Car1 = {
+        ...new Car1(),
+        ...this.mainCar,
+        ...this.apiCar,
+        ...this.customCar,
+        images: res,
+        // uid: '11234 MP-7',
+      };
+      // this.adminCarService.updateCar(currentCar);
+      this.adminCarService.createCar(currentCar).then(res => {
+        console.log('carAdded');
+        this.mainCar = null;
+        this.apiCar = null;
+        this.customCar = null;
+      });
+    });
   }
 }

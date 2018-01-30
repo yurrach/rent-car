@@ -57,6 +57,7 @@
       <div class="car-images__preview"
       *ngFor="let src of previewImageSrc; let i=index">
         <img class="car-images__img"
+        [ngClass]="{'default': this.customCarForm.controls['fileImages'].controls[i].get('isDefault').value}"
         [src]="src"
         >
         <h6 class="car-images__heading">Progress: {{currentUpload[i]?.progress}}% Complete</h6>
@@ -85,6 +86,4 @@
     </textarea>
   </div>
 </fieldset>
-<button class="btn btn_reset"
-        (click)="onAddToStore()">Add Images</button>
 

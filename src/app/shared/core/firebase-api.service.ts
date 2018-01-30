@@ -13,7 +13,7 @@ export class FirebaseApiService {
   constructor(public afs: AngularFirestore) {}
 
   // old version
-  public getCollectionRef1<T>(
+  /*   public getCollectionRef1<T>(
     path: string,
     orderName: string,
     orderDirection?: firebase.firestore.OrderByDirection,
@@ -21,7 +21,7 @@ export class FirebaseApiService {
     return this.afs.collection(path, ref =>
       ref.orderBy(orderName, orderDirection || 'desc'),
     );
-  }
+  } */
   //new ver
   public getCollectionRef<T>(
     path: string,
@@ -30,7 +30,7 @@ export class FirebaseApiService {
     return this.afs.collection(path, queryFn);
   }
   // old
-  public getCollection$1<T>(
+  /*   public getCollection$1<T>(
     path: string,
     orderName: string,
     orderDirection = 'asc' as any,
@@ -43,7 +43,7 @@ export class FirebaseApiService {
         return data;
       });
     });
-  }
+  } */
   //new
   public getCollection$<T>(path: string, queryFn: QueryFn): Observable<T[]> {
     return this.getCollectionRef(path, queryFn)
@@ -113,16 +113,16 @@ export class FirebaseApiService {
       });
   }
   // old
-  public createDoc1<T>(
+  /*   public createDoc1<T>(
     path: string,
     orderName: string,
     orderDirection,
     data: T,
   ) {
     return this.getCollectionRef1(path, orderName, orderDirection).add(data);
-  }
+  } */
   // new
-  public createDoc<T>(path: string, queryFn: QueryFn, data: T) {
+  public createDoc<T>(path: string, data: T, queryFn: QueryFn) {
     return this.getCollectionRef(path, queryFn).add(data);
   }
   /*   public createDoc<T>(

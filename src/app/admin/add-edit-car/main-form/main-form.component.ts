@@ -1,4 +1,11 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  OnDestroy,
+} from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { CarFormParam } from '../../shared/models/car-form-param.model';
@@ -10,9 +17,9 @@ import { Observable } from 'rxjs/Observable';
   templateUrl: './main-form.component.html',
   styleUrls: ['./main-form.component.scss'],
 })
-export class MainFormComponent implements OnInit {
+export class MainFormComponent implements OnInit, OnDestroy {
   loading = false;
-  currentCar;
+  @Input() currentCar;
   @Output() onMainFormFilled = new EventEmitter<FormGroup>(true);
   public mainCarForm: FormGroup;
   public mainCarFormParams: Array<CarFormParam>;
@@ -21,6 +28,16 @@ export class MainFormComponent implements OnInit {
     private carFormDataService: CarFormDataService,
   ) {}
 
+  ngOnDestroy(): void {
+    console.log('onDestroy');
+  }
+  ngOnChanges(): void {
+    console.log('onChanges', this.currentCar);
+    if (this.currentCar === null) {
+      console.log('null');
+      this.onControlChange({ name: 'year' }, 0);
+    }
+  }
   ngOnInit() {
     /* this.currentCar = {
       year: 2005,
