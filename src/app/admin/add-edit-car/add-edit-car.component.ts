@@ -8,6 +8,7 @@ import 'rxjs/add/operator/do';
 import { Car1 } from '../../shared/models/car.model';
 import * as firebase from 'firebase';
 import { zip } from 'rxjs/observable/zip';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'crayf-add-edit-car',
@@ -16,6 +17,7 @@ import { zip } from 'rxjs/observable/zip';
 })
 export class AddEditCarComponent implements OnInit {
   loading = false;
+  editCar: Car1;
   apiCarParams;
   public carForm: FormGroup;
   isMainCarFormValid = false;
@@ -34,9 +36,66 @@ export class AddEditCarComponent implements OnInit {
     private fb: FormBuilder,
     private adminCarService: AdminCarService,
     private carFormDataService: CarFormDataService,
+    private route: ActivatedRoute,
   ) {}
-
-  ngOnInit() {}
+  /*   ngOnDestroy(): void {
+    console.log('ngOnDestroy add-edit');
+  }
+  ngOnChanges(): void {
+    console.log('ngOnChanges add-edit');
+  }
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit add-edit');
+  }
+  ngAfterViewChecked() {
+    console.log('ngAfterViewChecked add-edit');
+  }
+  ngAfterContentInit() {
+    console.log('ngAfterContentInit add-edit');
+  }
+  ngAfterContentChecked() {
+    console.log('ngAfterContentChecked add-edit');
+  } */
+  ngOnInit() {
+    console.log('ngOnInit add-edit');
+    this.route.params
+      .mergeMap((params: Params) => {
+        if (params.id) {
+          return this.adminCarService.getCarById$(params.id);
+        } else {
+          return Observable.of(null);
+        }
+      })
+      .subscribe((car: Car1) => {
+        if (car) {
+          this.editCar = car;
+          this.mainCar = {
+            year: car.year,
+            make: car.make,
+            model: car.model,
+            trim: car.trim,
+          };
+          this.apiCar = {
+            drive: car.drive,
+            transmissionType: car.transmissionType,
+            engineCc: car.engineCc,
+            engineFuel: car.engineFuel,
+            lkmMixed: car.lkmMixed,
+            body: car.body,
+            seats: car.seats,
+          };
+          this.customCar = {
+            isNew: car.isNew,
+            isSale: car.isSale,
+            isAirConditioning: car.isAirConditioning,
+            saleAmount: car.saleAmount,
+            rentPrice: car.rentPrice,
+            images: car.images,
+            additionalInfo: car.additionalInfo,
+          };
+        }
+      });
+  }
   onMainFormChanged(mainFormGroup: FormGroup) {
     this.isMainCarFormValid = mainFormGroup.valid;
     if (mainFormGroup.valid) {
@@ -66,8 +125,10 @@ export class AddEditCarComponent implements OnInit {
   }
   onSubmit() {
     this.customCar.fileImages.forEach((image, i) => {
+      image.name = this.mainCar.make + '_' + this.mainCar.model + '_0' + i;
+      console.log(image);
       this.upload$[i] = this.adminCarService
-        .uploadCarImage(image.file)
+        .uploadCarImage(image)
         .map(uploadTask => {
           return {
             name: uploadTask.metadata.name,
@@ -85,7 +146,6 @@ export class AddEditCarComponent implements OnInit {
         ...this.apiCar,
         ...this.customCar,
         images: res,
-        // uid: '11234 MP-7',
       };
       // this.adminCarService.updateCar(currentCar);
       this.adminCarService.createCar(currentCar).then(res => {

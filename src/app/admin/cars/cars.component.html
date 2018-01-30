@@ -1,3 +1,44 @@
-<p>
-  cars works!
-</p>
+<div class="loader" *ngIf="!carsList">
+    <img src="../../../assets/img/loader.gif">
+  </div>
+<div *ngIf="carsList?.length===0"> there is no cars</div>
+<div *ngIf="carsList?.length">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Year</th>
+        <th>Make</th>
+        <th>Model</th>
+        <th>Trim</th>
+        <th>Created at</th>
+        <th>Images Number</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let car of carsList; let i=index" class="row">
+        <th>{{i+1}}</th>
+        <td>{{car.year}}</td>
+        <td>{{car.make}}</td>
+        <td>{{car.model}}</td>
+        <td>{{car.trim}}</td>
+        <td>{{car.createdAt | date: 'short'}}</td>
+        <td>{{car.images.length}}</td>
+        <td>
+          <a name="" id="" class="btn" role="button">Details</a>
+        </td>
+        <td><a name="" id="" class="btn btn_submit" 
+          [routerLink]="['/admin/cars', car.id]"
+          role="button">Edit</a>
+        </td>
+        <td>
+            <a name="" id="" class="btn btn_reset" role="button"
+            (click)="deleteCar(car)"
+            >Delete</a>
+          </td>
+
+      </tr>
+    </tbody>
+  </table>
+</div>

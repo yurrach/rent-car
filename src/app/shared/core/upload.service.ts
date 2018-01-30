@@ -37,4 +37,8 @@ export class UploadService {
     );
     return Observable.fromPromise(uploadTask);
   }
+  deleteUpload(basePath: string, name: string) {
+    const storageRef = firebase.storage().ref();
+    return storageRef.child(`${basePath}/${name}`).delete();
+  }
 }

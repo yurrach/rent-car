@@ -66,6 +66,11 @@ export class CarFormDataService {
     return this.http
       .jsonp(url, jsonpCallback)
       .map(res => {
+        console.log(res);
+        if (res['error']) {
+          console.log(res['error']);
+          return;
+        }
         const paramsArray: [any] = Object.values(res)[0];
         if (listName === 'model_trim') {
           this.currentCarParams = paramsArray;

@@ -10,7 +10,7 @@ import { CarFormDataService } from '../../shared/services/car-form-data.service'
   styleUrls: ['./api-form.component.scss'],
 })
 export class ApiFormComponent implements OnInit {
-  currentCar;
+  @Input() currentCar;
   apiCarForm: FormGroup;
   apiCarFormParams: Array<CarFormParam>;
   @Input() apiCarParams;

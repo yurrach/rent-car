@@ -29,24 +29,14 @@ export class MainFormComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnDestroy(): void {
-    console.log('onDestroy');
+    console.log('ngOnDestroy mainForm');
   }
   ngOnChanges(): void {
-    console.log('onChanges', this.currentCar);
+    console.log('ngOnChanges mainForm');
     if (this.currentCar === null) {
-      console.log('null');
+      console.log('ngOnChanges mainForm null');
       this.onControlChange({ name: 'year' }, 0);
     }
-  }
-  ngOnInit() {
-    /* this.currentCar = {
-      year: 2005,
-      make: 'Citroen',
-      model: 'C5',
-      trim: 'Break',
-    }; */
-    this.mainCarFormParams = this.carFormDataService.mainCarFormParams;
-    this.createMainCarForm();
     if (this.currentCar) {
       this.mainCarForm.patchValue(this.currentCar);
       this.mainCarFormParams.forEach(param => {
@@ -56,6 +46,23 @@ export class MainFormComponent implements OnInit, OnDestroy {
       });
       // this.onMainFormFilled.emit(this.mainCarForm);
     }
+  }
+  /*   ngAfterViewInit() {
+    console.log('ngAfterViewInit mainForm');
+  }
+  ngAfterViewChecked() {
+    console.log('ngAfterViewChecked mainForm');
+  }
+  ngAfterContentInit() {
+    console.log('ngAfterContentInit mainForm');
+  }
+  ngAfterContentChecked() {
+    console.log('ngAfterContentChecked mainForm');
+  } */
+  ngOnInit() {
+    console.log('ngOnInit mainForm');
+    this.mainCarFormParams = this.carFormDataService.mainCarFormParams;
+    this.createMainCarForm();
   }
 
   createMainCarForm() {

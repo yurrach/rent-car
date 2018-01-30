@@ -13,8 +13,9 @@ export class AdminCarService extends CarsService {
   ) {
     super(fbs);
   }
-  uploadCarImage(file: File) {
-    const upload = new Upload(file);
+  uploadCarImage(image) {
+    const upload = new Upload(image.file);
+    upload.name = image.name;
     return this.uploadService.pushUpload('/cars-images', upload);
   }
   updateCar(car: Car1) {
@@ -22,5 +23,15 @@ export class AdminCarService extends CarsService {
   }
   createCar(car) {
     return this.fbs.createDoc('cars', car, this.carQueryFn);
+  }
+  deleteCar(car: Car1) {
+    console.log(car);
+    const images = car.images;
+    images.forEach(image => {
+      this.uploadService.deleteUpload('/cars-images', image.name).then(() => {
+        console.log('delete', image.name);
+      });
+    });
+    this.fbs.deleteDoc('cars', car);
   }
 }

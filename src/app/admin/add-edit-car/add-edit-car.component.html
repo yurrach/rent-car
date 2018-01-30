@@ -3,6 +3,7 @@
                     (onMainFormFilled)="onMainFormChanged($event)"
                     ></crayf-main-form>
   <crayf-api-form *ngIf="isMainCarFormValid"
+  [currentCar]="apiCar"
   [currentTrim]="currentTrim"
   (onApiFormFilled)="onApiFormChanged($event)"></crayf-api-form>
   <crayf-custom-form 

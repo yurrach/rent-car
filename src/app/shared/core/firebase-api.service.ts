@@ -99,7 +99,7 @@ export class FirebaseApiService {
   } */
 
   public getDocRef<T>(path: string, data: T): AngularFirestoreDocument<T> {
-    return this.afs.doc(`${path}/${data['uid']}`);
+    return this.afs.doc(`${path}/${data['uid'] || data['id']}`);
   }
 
   public getDocById$<T>(path: string, id: string): Observable<T> {
