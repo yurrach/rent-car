@@ -1,18 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Car } from '../../../shared/models/car.model';
+import { Car1 } from '../../../shared/models/car.model';
 
 @Component({
   selector: 'crayf-cars-list',
   templateUrl: './cars-list.component.html',
-  styleUrls: ['./cars-list.component.scss']
+  styleUrls: ['./cars-list.component.scss'],
 })
 export class CarsListComponent implements OnInit {
+  constructor() {}
 
-  constructor() { }
+  @Input() carsList: Car1[];
 
-  @Input() carsList: Car[];
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

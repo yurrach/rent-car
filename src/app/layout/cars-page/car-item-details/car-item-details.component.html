@@ -1,7 +1,7 @@
 <div class="container" >
   <div class="row" *ngIf="car" >
     <div class="card col-6" >
-      <img class="card-img-top" src="{{car.model_images[0].url}}" alt="{{car.make_display}} {{car.model_name}}">
+      <img class="card-img-top" src="{{car.images[0].url}}" alt="{{car.make}} {{car.model}}">
       <crayf-car-star-rating [carId]="car.id"></crayf-car-star-rating>
       <div class="card-body">
         <a routerLink="/cars" class="btn btn-primary">Back</a>
@@ -10,18 +10,18 @@
     </div>
     <div class="card col-6" >
       <div class="card-body">
-        <h4 class="card-title">{{car.make_display}} {{car.model_name}}</h4>
+        <h4 class="card-title">{{car.make}} {{car.model}}</h4>
         <p class="card-text">Информация об автомобиле</p>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">Марка: {{car.make_display}} {{car.model_name}}</li>
-        <li class="list-group-item">Год выпуска: {{car.model_year}}</li>
-        <li class="list-group-item">Трансмиссия: {{car.model_transmission_type}}</li>
-        <li class="list-group-item">Двигатель: {{car.model_engine_cc/1000 | number:'1.1-1'}} {{car.model_engine_fuel}}</li>
-        <li class="list-group-item">Расход топлива: {{car.model_lkm_mixed}}</li>
-        <li class="list-group-item">Количество мест: {{car.model_seats}}</li>
-        <li class="list-group-item">Кондиционер: {{car.model_conditioning? 'Есть' : 'Нет'}}</li>
-        <li class="list-group-item">Дополнительно: {{car.model_description}}</li>
+        <li class="list-group-item">Марка: {{car.make}} {{car.model}}</li>
+        <li class="list-group-item">Год выпуска: {{car.year}}</li>
+        <li class="list-group-item">Трансмиссия: {{car.transmissionType}}</li>
+        <li class="list-group-item">Двигатель: {{car.engineCc/1000 | number:'1.1-1'}} {{car.engineFuel}}</li>
+        <li class="list-group-item">Расход топлива: {{car.lkmMixed}}</li>
+        <li class="list-group-item">Количество мест: {{car.seats}}</li>
+        <li class="list-group-item">Кондиционер: {{car.isAirConditioning? 'Есть' : 'Нет'}}</li>
+        <li class="list-group-item">Дополнительно: {{car.additionalInfo}}</li>
       </ul>
       
 
