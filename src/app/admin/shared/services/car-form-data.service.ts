@@ -69,37 +69,29 @@ export class CarFormDataService {
 
   getCarParamsList$(dataQuery, listName) {
     const jsonpCallback = `callback`;
-    if (!listName) {
-      console.log('here1111');
-      return Observable.of(null);
-    }
     const url = this.getQueryUrl(dataQuery, listName);
 
-    return this.http
-      .jsonp(url, jsonpCallback)
-      .map(res => {
-        console.log(res);
-        if (res['error']) {
-          res = {
-            cars: [
-              {
-                make_display: 'Citroen',
-                model_name: 'C5',
-              },
-              {
-                make_display: 'Audi',
-                model_name: 'A6',
-              },
-            ],
-          };
-        }
-        const paramsArray: [any] = Object.values(res)[0];
-        if (listName === 'model_trim') {
-          this.currentCarParams = paramsArray;
-        }
-        return paramsArray.map(param => param[listName]);
-      })
-      .delay(1000);
+    return this.http.jsonp(url, jsonpCallback).map(res => {
+      if (res['error']) {
+        res = {
+          cars: [
+            {
+              make_display: 'Citroen',
+              model_name: 'C5',
+            },
+            {
+              make_display: 'Audi',
+              model_name: 'A6',
+            },
+          ],
+        };
+      }
+      const paramsArray: [any] = Object.values(res)[0];
+      if (listName === 'model_trim') {
+        this.currentCarParams = paramsArray;
+      }
+      return paramsArray.map(param => param[listName]);
+    });
   }
   getCarParamsByTrim(trim) {
     const params = this.currentCarParams.filter(

@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarFormParam } from '../../shared/models/car-form-param.model';
 import { CarFormDataService } from '../../shared/services/car-form-data.service';
 import { Observable } from 'rxjs/Observable';
+import { zip } from 'rxjs/observable/zip';
 
 @Component({
   selector: 'crayf-main-form',
@@ -26,22 +27,25 @@ export class MainFormComponent implements OnInit, OnDestroy {
   ngOnChanges(): void {
     if (this.currentCar) {
       this.showAllSelect(false);
-      console.log(this.mainCarFormParams[0].isShow);
+      this.isSpinnerShow = true;
       this.mainCarForm.patchValue(this.currentCar);
-      this.mainCarFormParams.forEach(param => {
-        this.getListFromApi1(param);
-        /* if (param.listName) {
-          param.optionsList$ = this.getListFromApi(param.listName);
-          this.getListFromApi$(param.listName).subscribe(res => {
-            param.optionsList = res;
-            counter += 1;
-            if (counter === this.mainCarFormParams.length) {
-              this.showAllSelect(true);
-              this.isSpinnerShow = false;
-            }
+      const optionsListArray$ = this.mainCarFormParams
+        .filter(param => {
+          return param.listName;
+        })
+        .map(param => {
+          return this.getListFromApi$(param);
+        });
+      zip(...optionsListArray$).subscribe(result => {
+        this.mainCarFormParams
+          .filter(param => {
+            return param.listName;
+          })
+          .forEach((param, i) => {
+            param.optionsList = result[i];
+            this.isSpinnerShow = false;
+            this.showAllSelect(true);
           });
-          this.getListFromApi1(param);
-        } */
       });
     }
   }
@@ -58,10 +62,10 @@ export class MainFormComponent implements OnInit, OnDestroy {
     this.mainCarForm = this.fb.group(mainConfig);
   }
 
-  getListFromApi$(listName) {
+  getListFromApi$(param: CarFormParam) {
     return this.carFormDataService.getCarParamsList$(
       this.mainCarForm.value,
-      listName,
+      param.listName,
     );
   }
 
@@ -83,33 +87,11 @@ export class MainFormComponent implements OnInit, OnDestroy {
       this.reset(nextIndex);
     }
     this.isSpinnerShow = true;
-    /* nextParam.optionsList$ = this.getListFromApi(nextParam.listName).do(() => {
+    this.getListFromApi$(nextParam).subscribe(res => {
+      nextParam.optionsList = res;
+      nextParam.isShow = true;
       this.isSpinnerShow = false;
-    }); */
-
-    /* this.getListFromApi$(nextParam.listName)
-      .do(() => {
-        nextParam.isShow = true;
-        this.isSpinnerShow = false;
-      })
-      .subscribe(res => {
-        nextParam.optionsList = res;
-      }); */
-    this.getListFromApi1(nextParam);
-  }
-  getListFromApi1(param: CarFormParam) {
-    this.isSpinnerShow = true;
-
-    return this.carFormDataService
-      .getCarParamsList$(this.mainCarForm.value, param.listName)
-      .subscribe(res => {
-        if (res) {
-          param.optionsList = res;
-          param.isShow = true;
-          this.mainCarFormParams[0].isShow = true;
-        }
-        this.isSpinnerShow = false;
-      });
+    });
   }
   showAllSelect(isShow: Boolean) {
     this.mainCarFormParams.forEach(elem => {
