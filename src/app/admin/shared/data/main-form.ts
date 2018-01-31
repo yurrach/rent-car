@@ -12,7 +12,7 @@ const year: CarFormParam = {
   optionsList$: Observable.of(null),
   optionsList: [],
   listName: '',
-  isShow: true,
+  isShow: false,
 };
 const make: CarFormParam = {
   type: 'select',

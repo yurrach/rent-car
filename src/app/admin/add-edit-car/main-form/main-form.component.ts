@@ -25,14 +25,14 @@ export class MainFormComponent implements OnInit, OnDestroy {
   }
   ngOnChanges(): void {
     if (this.currentCar) {
-      this.isSpinnerShow = true;
       this.showAllSelect(false);
-      let counter = 1;
+      console.log(this.mainCarFormParams[0].isShow);
       this.mainCarForm.patchValue(this.currentCar);
       this.mainCarFormParams.forEach(param => {
-        if (param.listName) {
+        this.getListFromApi1(param);
+        /* if (param.listName) {
           param.optionsList$ = this.getListFromApi(param.listName);
-          this.getListFromApi(param.listName).subscribe(res => {
+          this.getListFromApi$(param.listName).subscribe(res => {
             param.optionsList = res;
             counter += 1;
             if (counter === this.mainCarFormParams.length) {
@@ -40,7 +40,8 @@ export class MainFormComponent implements OnInit, OnDestroy {
               this.isSpinnerShow = false;
             }
           });
-        }
+          this.getListFromApi1(param);
+        } */
       });
     }
   }
@@ -57,12 +58,13 @@ export class MainFormComponent implements OnInit, OnDestroy {
     this.mainCarForm = this.fb.group(mainConfig);
   }
 
-  getListFromApi(listName) {
+  getListFromApi$(listName) {
     return this.carFormDataService.getCarParamsList$(
       this.mainCarForm.value,
       listName,
     );
   }
+
   onChange(target: HTMLSelectElement) {
     const controlName = target.name;
     if (controlName === 'trim') {
@@ -85,13 +87,28 @@ export class MainFormComponent implements OnInit, OnDestroy {
       this.isSpinnerShow = false;
     }); */
 
-    this.getListFromApi(nextParam.listName)
+    /* this.getListFromApi$(nextParam.listName)
       .do(() => {
         nextParam.isShow = true;
         this.isSpinnerShow = false;
       })
       .subscribe(res => {
         nextParam.optionsList = res;
+      }); */
+    this.getListFromApi1(nextParam);
+  }
+  getListFromApi1(param: CarFormParam) {
+    this.isSpinnerShow = true;
+
+    return this.carFormDataService
+      .getCarParamsList$(this.mainCarForm.value, param.listName)
+      .subscribe(res => {
+        if (res) {
+          param.optionsList = res;
+          param.isShow = true;
+          this.mainCarFormParams[0].isShow = true;
+        }
+        this.isSpinnerShow = false;
       });
   }
   showAllSelect(isShow: Boolean) {

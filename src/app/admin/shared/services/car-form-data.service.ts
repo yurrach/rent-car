@@ -69,6 +69,10 @@ export class CarFormDataService {
 
   getCarParamsList$(dataQuery, listName) {
     const jsonpCallback = `callback`;
+    if (!listName) {
+      console.log('here1111');
+      return Observable.of(null);
+    }
     const url = this.getQueryUrl(dataQuery, listName);
 
     return this.http
