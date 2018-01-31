@@ -66,10 +66,19 @@ export class CarFormDataService {
     return this.http
       .jsonp(url, jsonpCallback)
       .map(res => {
-        console.log(res);
         if (res['error']) {
-          console.log(res['error']);
-          return;
+          res = {
+            cars: [
+              {
+                make_display: 'Citroen',
+                model_name: 'C5',
+              },
+              {
+                make_display: 'Audi',
+                model_name: 'A6',
+              },
+            ],
+          };
         }
         const paramsArray: [any] = Object.values(res)[0];
         if (listName === 'model_trim') {

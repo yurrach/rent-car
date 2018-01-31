@@ -57,7 +57,7 @@ export class AddEditCarComponent implements OnInit {
     console.log('ngAfterContentChecked add-edit');
   } */
   ngOnInit() {
-    console.log('ngOnInit add-edit');
+    // console.log('ngOnInit add-edit');
     this.route.params
       .mergeMap((params: Params) => {
         if (params.id) {

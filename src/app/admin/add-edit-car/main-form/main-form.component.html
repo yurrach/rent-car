@@ -1,6 +1,7 @@
-<fieldset [formGroup]="mainCarForm">
+<fieldset [formGroup]="mainCarForm"
+(change)="onChange($event.target)">
   <ng-container *ngFor="let param of mainCarFormParams; let i = index">
-    <div *ngIf="param.optionsList$ | async"
+    <div *ngIf="param.isShow"
           class="form__group">
       <label class="form__label" for="{{param.name}}">
         {{param.label}}
@@ -9,7 +10,8 @@
               formControlName="{{param.name}}"
               name="{{param.name}}"
               id="{{param.name}}"
-              (change)="onControlChange($event.target, i)">
+              
+              >
         <option value="">{{param.placeholder}}</option>
         <option *ngFor="let option of param.optionsList$ | async"
                 value="{{option}}">

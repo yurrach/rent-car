@@ -11,6 +11,7 @@ const year: CarFormParam = {
   validators: [Validators.required],
   optionsList$: Observable.of(null),
   listName: '',
+  isShow: true,
 };
 const make: CarFormParam = {
   type: 'select',
@@ -21,6 +22,7 @@ const make: CarFormParam = {
   validators: [Validators.required],
   optionsList$: Observable.of(null),
   listName: 'make_display',
+  isShow: false,
 };
 const model: CarFormParam = {
   type: 'select',
@@ -31,6 +33,7 @@ const model: CarFormParam = {
   validators: [Validators.required],
   optionsList$: Observable.of(null),
   listName: 'model_name',
+  isShow: false,
 };
 const trim: CarFormParam = {
   type: 'select',
@@ -41,6 +44,7 @@ const trim: CarFormParam = {
   validators: [Validators.required],
   optionsList$: Observable.of(null),
   listName: 'model_trim',
+  isShow: false,
 };
 
 export const mainCarFormParams: CarFormParam[] = [year, make, model, trim];

@@ -29,38 +29,23 @@ export class MainFormComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnDestroy(): void {
-    console.log('ngOnDestroy mainForm');
+    this.reset();
   }
   ngOnChanges(): void {
-    console.log('ngOnChanges mainForm');
-    if (this.currentCar === null) {
-      console.log('ngOnChanges mainForm null');
-      this.onControlChange({ name: 'year' }, 0);
-    }
     if (this.currentCar) {
+      this.loading = true;
       this.mainCarForm.patchValue(this.currentCar);
       this.mainCarFormParams.forEach(param => {
         if (param.listName) {
           param.optionsList$ = this.getListFromApi(param.listName);
+          param.isShow = true;
         }
       });
-      // this.onMainFormFilled.emit(this.mainCarForm);
+      this.loading = false;
     }
   }
-  /*   ngAfterViewInit() {
-    console.log('ngAfterViewInit mainForm');
-  }
-  ngAfterViewChecked() {
-    console.log('ngAfterViewChecked mainForm');
-  }
-  ngAfterContentInit() {
-    console.log('ngAfterContentInit mainForm');
-  }
-  ngAfterContentChecked() {
-    console.log('ngAfterContentChecked mainForm');
-  } */
+
   ngOnInit() {
-    console.log('ngOnInit mainForm');
     this.mainCarFormParams = this.carFormDataService.mainCarFormParams;
     this.createMainCarForm();
   }
@@ -71,45 +56,50 @@ export class MainFormComponent implements OnInit, OnDestroy {
     );
     this.mainCarForm = this.fb.group(mainConfig);
   }
-  onControlChange({ name }, i) {
-    if (i < this.mainCarFormParams.length - 1) {
-      this.loading = true;
-      const nextIndex = i + 1;
-      const nextCarParam = this.mainCarFormParams[nextIndex];
-      const nextControl = this.mainCarForm.controls[nextCarParam.name];
-      if (nextControl.value) {
-        for (
-          let index = i + 1;
-          index < this.mainCarFormParams.length;
-          index++
-        ) {
-          const curParam = this.mainCarFormParams[index];
-          this.resetForm(curParam.name);
-          this.resetOptionsLists(index);
-        }
-      }
-
-      if (this.mainCarForm.controls[name].valid) {
-        nextCarParam.optionsList$ = this.getListFromApi(
-          nextCarParam.listName,
-        ).do(() => {
-          this.loading = false;
-        });
-      }
-    }
-    this.onMainFormFilled.emit(this.mainCarForm);
-  }
-  resetForm(controlName) {
-    this.mainCarForm.controls[controlName].reset('');
-  }
-  resetOptionsLists(index) {
-    this.mainCarFormParams[index].optionsList$ = Observable.of(null);
-  }
 
   getListFromApi(listName) {
     return this.carFormDataService.getCarParamsList$(
       this.mainCarForm.value,
       listName,
     );
+  }
+  onChange(target: HTMLSelectElement) {
+    const controlName = target.name;
+    if (controlName === 'trim') {
+      console.log('getParamsByTrim');
+      return;
+    }
+    const param = this.mainCarFormParams.find(el => {
+      return el.name === controlName;
+    });
+    const control = this.mainCarForm.controls[param.name];
+    const index = this.mainCarFormParams.indexOf(param);
+    const nextIndex = index + 1;
+    const nextParam = this.mainCarFormParams[nextIndex];
+    const nextControl = this.mainCarForm.controls[nextParam.name];
+    if (nextControl.value) {
+      this.reset(nextIndex);
+    }
+    this.loading = true;
+    nextParam.isShow = control.value ? true : false;
+    nextParam.optionsList$ = this.getListFromApi(nextParam.listName).do(() => {
+      this.loading = false;
+    });
+  }
+  showAllSelect() {
+    this.mainCarFormParams.forEach(elem => {
+      elem.isShow = true;
+    });
+  }
+  reset(i = 0) {
+    for (let index = i; index < this.mainCarFormParams.length; index++) {
+      const element = this.mainCarFormParams[index];
+      const control = this.mainCarForm.controls[element.name];
+      if (index !== 0) {
+        element.optionsList$ = Observable.of(null);
+        element.isShow = false;
+      }
+      control.reset('');
+    }
   }
 }
