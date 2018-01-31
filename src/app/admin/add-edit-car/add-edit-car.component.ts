@@ -16,6 +16,8 @@ import { ActivatedRoute, Params } from '@angular/router';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
+  isShowApiForm = false;
+  isShowCustomForm = false;
   loading = false;
   editCar: Car1;
   apiCarParams;
@@ -78,30 +80,30 @@ export class AddEditCarComponent implements OnInit {
         }
       });
   }
-  onMainFormChanged(mainFormGroup: FormGroup) {
+  /* onMainFormChanged(mainFormGroup: FormGroup) {
     this.isMainCarFormValid = mainFormGroup.valid;
     if (mainFormGroup.valid) {
       this.currentTrim = mainFormGroup.controls['trim'].value;
       this.mainCar = mainFormGroup.value;
-      /* this.apiCarParams = this.getApiCarParams(
+      this.apiCarParams = this.getApiCarParams(
         mainFormGroup.controls['trim'].value,
-      ); */
+      );
     }
-  }
-  getApiCarParams(trim) {
+  } */
+  /* getApiCarParams(trim) {
     return this.carFormDataService.getCarParamsByTrim(trim);
-  }
-  onApiFormChanged(apiFormGroup: FormGroup) {
+  } */
+  /* onApiFormChanged(apiFormGroup: FormGroup) {
     this.isApiCarFormValid = apiFormGroup.valid;
     this.apiCar = apiFormGroup.value;
-  }
-  onCustomFormChanged(customFormGroup: FormGroup) {
+  } */
+  /* onCustomFormChanged(customFormGroup: FormGroup) {
     this.isCustomCarFormValid = customFormGroup.valid;
     if (customFormGroup.valid) {
       this.customCar = customFormGroup.value;
       console.log(this.customCar);
     }
-  }
+  } */
   onReset() {
     console.log('reset form');
   }
@@ -137,5 +139,17 @@ export class AddEditCarComponent implements OnInit {
         this.customCar = null;
       });
     });
+  }
+  onMainCarFormChange(mainForm: FormGroup) {
+    this.isShowApiForm = mainForm.valid;
+    if (mainForm.invalid) {
+      this.apiCar = null;
+    }
+    if (!this.apiCar && mainForm.valid) {
+      console.log('getParamsByTrimm');
+      this.apiCar = this.carFormDataService.getCarParamsByTrim(
+        mainForm.controls['trim'].value,
+      );
+    }
   }
 }

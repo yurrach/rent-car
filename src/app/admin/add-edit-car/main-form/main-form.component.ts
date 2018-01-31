@@ -1,10 +1,18 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnDestroy,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { CarFormParam } from '../../shared/models/car-form-param.model';
 import { CarFormDataService } from '../../shared/services/car-form-data.service';
 import { Observable } from 'rxjs/Observable';
 import { zip } from 'rxjs/observable/zip';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'crayf-main-form',
@@ -13,7 +21,9 @@ import { zip } from 'rxjs/observable/zip';
 })
 export class MainFormComponent implements OnInit, OnDestroy {
   isSpinnerShow = false;
+  sub1: Subscription;
   @Input() currentCar;
+  @Output() onMainCarFormChange: EventEmitter<FormGroup> = new EventEmitter();
   public mainCarForm: FormGroup;
   public mainCarFormParams: Array<CarFormParam>;
   constructor(
@@ -22,6 +32,7 @@ export class MainFormComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnDestroy(): void {
+    this.sub1.unsubscribe();
     this.reset();
   }
   ngOnChanges(): void {
@@ -53,6 +64,9 @@ export class MainFormComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.mainCarFormParams = this.carFormDataService.mainCarFormParams;
     this.createMainCarForm();
+    this.sub1 = this.mainCarForm.valueChanges.subscribe(() => {
+      this.onMainCarFormChange.emit(this.mainCarForm);
+    });
   }
 
   createMainCarForm() {
@@ -71,6 +85,7 @@ export class MainFormComponent implements OnInit, OnDestroy {
 
   onChange(target: HTMLSelectElement) {
     const controlName = target.name;
+
     if (controlName === 'trim') {
       console.log('getParamsByTrim');
       return;

@@ -1,12 +1,13 @@
 <form class="form" novalidate >
-  <crayf-main-form  [currentCar]="mainCar"></crayf-main-form>
-  <crayf-api-form *ngIf="isMainCarFormValid"
+  <crayf-main-form  [currentCar]="mainCar"
+  (onMainCarFormChange) = "onMainCarFormChange($event)"></crayf-main-form>
+  <crayf-api-form *ngIf="isShowApiForm"
   [currentCar]="apiCar"
   [currentTrim]="currentTrim"
-  (onApiFormFilled)="onApiFormChanged($event)"></crayf-api-form>
+  ></crayf-api-form>
   <crayf-custom-form 
-  (onCustomFormFilled)="onCustomFormChanged($event)"
-  *ngIf="isMainCarFormValid&&isApiCarFormValid">
+  
+  *ngIf="isShowCustomForm">
   </crayf-custom-form>
   <div class="form__btn" *ngIf="isMainCarFormValid&&isApiCarFormValid&&isCustomCarFormValid">
     <button class="btn btn_submit" type="submit" (click)="onSubmit()">
