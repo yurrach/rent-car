@@ -13,7 +13,7 @@
               
               >
         <option value="">{{param.placeholder}}</option>
-        <option *ngFor="let option of param.optionsList$ | async"
+        <option *ngFor="let option of param.optionsList"
                 value="{{option}}">
           {{option}}
         </option>
@@ -24,6 +24,6 @@
     </div>
   </ng-container>
 </fieldset>
-<div class="loader" *ngIf="loading">
+<div class="loader" *ngIf="isSpinnerShow">
   <img src="../../../assets/img/loader.gif">
 </div>

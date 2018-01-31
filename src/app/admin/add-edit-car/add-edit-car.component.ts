@@ -38,26 +38,8 @@ export class AddEditCarComponent implements OnInit {
     private carFormDataService: CarFormDataService,
     private route: ActivatedRoute,
   ) {}
-  /*   ngOnDestroy(): void {
-    console.log('ngOnDestroy add-edit');
-  }
-  ngOnChanges(): void {
-    console.log('ngOnChanges add-edit');
-  }
-  ngAfterViewInit() {
-    console.log('ngAfterViewInit add-edit');
-  }
-  ngAfterViewChecked() {
-    console.log('ngAfterViewChecked add-edit');
-  }
-  ngAfterContentInit() {
-    console.log('ngAfterContentInit add-edit');
-  }
-  ngAfterContentChecked() {
-    console.log('ngAfterContentChecked add-edit');
-  } */
+
   ngOnInit() {
-    // console.log('ngOnInit add-edit');
     this.route.params
       .mergeMap((params: Params) => {
         if (params.id) {

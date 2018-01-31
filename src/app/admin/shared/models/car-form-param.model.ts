@@ -8,8 +8,9 @@ export class CarFormParam {
   public value: string;
   public validators: Array<any>;
   public optionsList$?: Observable<string[] | number[]>;
+  public optionsList?: string[] | number[];
   public listName?: string;
-  public isShow?: boolean;
+  public isShow?: Boolean;
 
   constructor() {}
 }

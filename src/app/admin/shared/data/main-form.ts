@@ -10,6 +10,7 @@ const year: CarFormParam = {
   value: '',
   validators: [Validators.required],
   optionsList$: Observable.of(null),
+  optionsList: [],
   listName: '',
   isShow: true,
 };
@@ -21,6 +22,7 @@ const make: CarFormParam = {
   value: '',
   validators: [Validators.required],
   optionsList$: Observable.of(null),
+  optionsList: [],
   listName: 'make_display',
   isShow: false,
 };
@@ -32,6 +34,7 @@ const model: CarFormParam = {
   value: '',
   validators: [Validators.required],
   optionsList$: Observable.of(null),
+  optionsList: [],
   listName: 'model_name',
   isShow: false,
 };
@@ -43,6 +46,7 @@ const trim: CarFormParam = {
   value: '',
   validators: [Validators.required],
   optionsList$: Observable.of(null),
+  optionsList: [],
   listName: 'model_trim',
   isShow: false,
 };

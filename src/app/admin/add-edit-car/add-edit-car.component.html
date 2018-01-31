@@ -1,7 +1,5 @@
 <form class="form" novalidate >
-  <crayf-main-form  [currentCar]="mainCar"
-                    (onMainFormFilled)="onMainFormChanged($event)"
-                    ></crayf-main-form>
+  <crayf-main-form  [currentCar]="mainCar"></crayf-main-form>
   <crayf-api-form *ngIf="isMainCarFormValid"
   [currentCar]="apiCar"
   [currentTrim]="currentTrim"

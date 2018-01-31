@@ -4,7 +4,6 @@ import { Observable } from 'rxjs/Observable';
 import { mainCarFormParams } from '../data/main-form';
 import { apiCarFormParams } from '../data/api-form';
 import { HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/publishLast';
 import 'rxjs/add/operator/delay';
 
 @Injectable()
@@ -15,6 +14,7 @@ export class CarFormDataService {
 
   get mainCarFormParams(): CarFormParam[] {
     mainCarFormParams[0].optionsList$ = this.getYearsList$(2000);
+    mainCarFormParams[0].optionsList = this.getYearsList(2000);
     return mainCarFormParams;
   }
 
@@ -29,6 +29,14 @@ export class CarFormDataService {
       yearsList.push(i);
     }
     return Observable.of(yearsList);
+  }
+  private getYearsList(startYear): number[] {
+    const yearsList = [];
+    const endYear = new Date().getFullYear();
+    for (let i = startYear; i <= endYear; i++) {
+      yearsList.push(i);
+    }
+    return yearsList;
   }
 
   public getFormControlConfig(formParamsArray: CarFormParam[]) {
@@ -66,6 +74,7 @@ export class CarFormDataService {
     return this.http
       .jsonp(url, jsonpCallback)
       .map(res => {
+        console.log(res);
         if (res['error']) {
           res = {
             cars: [
@@ -86,8 +95,7 @@ export class CarFormDataService {
         }
         return paramsArray.map(param => param[listName]);
       })
-      .publishLast()
-      .refCount();
+      .delay(1000);
   }
   getCarParamsByTrim(trim) {
     const params = this.currentCarParams.filter(
