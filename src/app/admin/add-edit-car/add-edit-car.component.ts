@@ -16,6 +16,7 @@ import { ActivatedRoute, Params } from '@angular/router';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
+  isEditMode = false;
   isShowApiForm = false;
   isShowCustomForm = false;
   loading = false;
@@ -52,6 +53,7 @@ export class AddEditCarComponent implements OnInit {
       })
       .subscribe((car: Car1) => {
         if (car) {
+          this.isEditMode = true;
           this.editCar = car;
           this.mainCar = {
             year: car.year,
@@ -131,7 +133,6 @@ export class AddEditCarComponent implements OnInit {
         ...this.customCar,
         images: res,
       };
-      // this.adminCarService.updateCar(currentCar);
       this.adminCarService.createCar(currentCar).then(res => {
         console.log('carAdded');
         this.mainCar = null;
@@ -142,14 +143,12 @@ export class AddEditCarComponent implements OnInit {
   }
   onMainCarFormChange(mainForm: FormGroup) {
     this.isShowApiForm = mainForm.valid;
-    if (mainForm.invalid) {
-      this.apiCar = null;
-    }
-    if (!this.apiCar && mainForm.valid) {
+    if (!this.isEditMode && mainForm.valid) {
       console.log('getParamsByTrimm');
       this.apiCar = this.carFormDataService.getCarParamsByTrim(
         mainForm.controls['trim'].value,
       );
     }
+    this.isEditMode = false;
   }
 }

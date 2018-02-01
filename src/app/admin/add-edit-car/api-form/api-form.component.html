@@ -1,7 +1,7 @@
 <fieldset [formGroup]="apiCarForm" *ngIf="apiCarForm" 
           >
-  <ng-container *ngFor="let param of getApiValidParams(); let i = index">
-    <div 
+  <ng-container *ngFor="let param of apiCarFormParams; let i = index">
+    <div *ngIf="param.isShow"
           class="form__group">
     <label class="form__label" for="{{param.name}}">
       {{param.label}}

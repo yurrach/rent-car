@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  SimpleChanges,
+} from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarFormParam } from '../../shared/models/car-form-param.model';
 import { AdminCarService } from '../../shared/services/admin-car.service';
@@ -13,56 +20,46 @@ export class ApiFormComponent implements OnInit {
   @Input() currentCar;
   apiCarForm: FormGroup;
   apiCarFormParams: Array<CarFormParam>;
-  @Input() apiCarParams;
-  @Input() currentTrim;
-  @Output() onApiFormFilled = new EventEmitter<FormGroup>(true);
+  // @Input() apiCarParams;
+  // @Input() currentTrim;
+  // @Output() onApiFormFilled = new EventEmitter<FormGroup>(true);
 
   constructor(
     private fb: FormBuilder,
     private adminCarService: AdminCarService,
     private carFormDataService: CarFormDataService,
   ) {}
-
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('ngOnChanges', this.currentCar);
+    if (this.currentCar && this.apiCarForm) {
+      this.apiCarForm.patchValue(this.currentCar);
+      console.log(this.currentCar);
+    }
+  }
   ngOnInit() {
-    /* this.currentCar = {
-      drive: 'Front',
-      engineCc: '1560',
-      engineFuel: 'Front',
-      lkmMixed: '5.4',
-      body: 'Station Wagon',
-      seats: '5',
-    }; */
+    console.log('ngOnInit');
+
     this.apiCarFormParams = this.carFormDataService.apiCarFormParams;
     this.createApiCarForm();
-    if (this.apiCarForm.valid) {
-      this.onApiFormFilled.emit(this.apiCarForm);
-    }
-    this.apiCarForm.statusChanges.subscribe(status => {
-      if (status === 'VALID') {
-        this.onApiFormFilled.emit(this.apiCarForm);
-      }
+    this.apiCarForm.valueChanges.subscribe(() => {
+      let isShow = true;
+      this.apiCarFormParams.map(param => {
+        param.isShow = isShow;
+
+        if (this.apiCarForm.controls[param.name].invalid) {
+          isShow = false;
+        }
+      });
     });
+    if (this.currentCar && this.apiCarForm) {
+      this.apiCarForm.patchValue(this.currentCar);
+      console.log(this.currentCar);
+    }
   }
   createApiCarForm() {
     const apiConfig = this.carFormDataService.getFormControlConfig(
       this.apiCarFormParams,
     );
     this.apiCarForm = this.fb.group(apiConfig);
-    if (!this.currentCar) {
-      this.currentCar = this.carFormDataService.getCarParamsByTrim(
-        this.currentTrim,
-      );
-    }
-    this.apiCarForm.patchValue(this.currentCar || {});
-  }
-  getApiValidParams() {
-    let show = true;
-    return this.carFormDataService.apiCarFormParams.filter(param => {
-      if (this.apiCarForm.controls[param.name].invalid) {
-        show = false;
-        return true;
-      }
-      return show;
-    });
   }
 }

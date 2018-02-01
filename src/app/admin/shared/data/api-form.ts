@@ -9,6 +9,7 @@ const drive: CarFormParam = {
   label: 'Привод:',
   value: '',
   validators: [Validators.required],
+  isShow: false,
 };
 const transmissionType: CarFormParam = {
   type: 'text',
@@ -17,6 +18,7 @@ const transmissionType: CarFormParam = {
   label: 'Коробка передач:',
   value: '',
   validators: [Validators.required],
+  isShow: false,
 };
 const engineCc: CarFormParam = {
   type: 'text',
@@ -25,6 +27,7 @@ const engineCc: CarFormParam = {
   label: 'Объем двигателя:',
   value: '',
   validators: [Validators.required],
+  isShow: false,
 };
 const engineFuel: CarFormParam = {
   type: 'text',
@@ -33,6 +36,7 @@ const engineFuel: CarFormParam = {
   label: 'Топливо:',
   value: '',
   validators: [Validators.required],
+  isShow: false,
 };
 const lkmMixed: CarFormParam = {
   type: 'text',
@@ -41,6 +45,7 @@ const lkmMixed: CarFormParam = {
   label: 'Расход в смешанном цикле:',
   value: '',
   validators: [Validators.required],
+  isShow: false,
 };
 const body: CarFormParam = {
   type: 'text',
@@ -49,6 +54,7 @@ const body: CarFormParam = {
   label: 'Кузов:',
   value: '',
   validators: [Validators.required],
+  isShow: false,
 };
 const seats: CarFormParam = {
   type: 'text',
@@ -57,6 +63,7 @@ const seats: CarFormParam = {
   label: 'Количество мест:',
   value: '',
   validators: [Validators.required],
+  isShow: false,
 };
 
 export const apiCarFormParams: CarFormParam[] = [
