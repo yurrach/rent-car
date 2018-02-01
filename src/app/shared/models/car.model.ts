@@ -32,7 +32,6 @@ export class Car1 {
   lkmMixed: number;
   body: string;
   seats: number;
-  isNew: boolean;
   isSale: boolean;
   saleAmount?: number;
   isAirConditioning: boolean;

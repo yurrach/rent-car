@@ -22,7 +22,7 @@ export class ApiFormComponent implements OnInit {
   apiCarFormParams: Array<CarFormParam>;
   // @Input() apiCarParams;
   // @Input() currentTrim;
-  // @Output() onApiFormFilled = new EventEmitter<FormGroup>(true);
+  @Output() onApiCarFormChange = new EventEmitter<FormGroup>(true);
 
   constructor(
     private fb: FormBuilder,
@@ -30,30 +30,29 @@ export class ApiFormComponent implements OnInit {
     private carFormDataService: CarFormDataService,
   ) {}
   ngOnChanges(changes: SimpleChanges) {
-    console.log('ngOnChanges', this.currentCar);
     if (this.currentCar && this.apiCarForm) {
       this.apiCarForm.patchValue(this.currentCar);
-      console.log(this.currentCar);
     }
   }
+  ngOnDestroy() {
+    // this.apiCarForm.reset();
+  }
   ngOnInit() {
-    console.log('ngOnInit');
-
     this.apiCarFormParams = this.carFormDataService.apiCarFormParams;
     this.createApiCarForm();
     this.apiCarForm.valueChanges.subscribe(() => {
       let isShow = true;
       this.apiCarFormParams.map(param => {
         param.isShow = isShow;
-
         if (this.apiCarForm.controls[param.name].invalid) {
           isShow = false;
         }
       });
+
+      this.onApiCarFormChange.emit(this.apiCarForm);
     });
     if (this.currentCar && this.apiCarForm) {
       this.apiCarForm.patchValue(this.currentCar);
-      console.log(this.currentCar);
     }
   }
   createApiCarForm() {

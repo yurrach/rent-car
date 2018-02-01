@@ -36,6 +36,11 @@ export class MainFormComponent implements OnInit, OnDestroy {
     this.reset();
   }
   ngOnChanges(): void {
+    console.log(this.currentCar);
+    if (this.currentCar === null) {
+      console.log('in if', this.currentCar);
+      this.reset();
+    }
     if (this.currentCar) {
       this.showAllSelect(false);
       this.isSpinnerShow = true;
@@ -87,7 +92,6 @@ export class MainFormComponent implements OnInit, OnDestroy {
     const controlName = target.name;
 
     if (controlName === 'trim') {
-      console.log('getParamsByTrim');
       return;
     }
     const param = this.mainCarFormParams.find(el => {

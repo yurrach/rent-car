@@ -19,19 +19,12 @@ export class AddEditCarComponent implements OnInit {
   isEditMode = false;
   isShowApiForm = false;
   isShowCustomForm = false;
-  loading = false;
+  isCarFormValid = false;
   editCar: Car1;
-  apiCarParams;
   public carForm: FormGroup;
-  isMainCarFormValid = false;
-  isApiCarFormValid = false;
-  isCustomCarFormValid = false;
-  isMainFormVisible = true;
-  currentTrim;
   mainCar;
   apiCar;
   customCar;
-  upload$: [Observable<any>] = [null];
 
   private carImages: FormArray;
 
@@ -54,7 +47,6 @@ export class AddEditCarComponent implements OnInit {
       .subscribe((car: Car1) => {
         if (car) {
           this.isEditMode = true;
-          this.editCar = car;
           this.mainCar = {
             year: car.year,
             make: car.make,
@@ -71,7 +63,6 @@ export class AddEditCarComponent implements OnInit {
             seats: car.seats,
           };
           this.customCar = {
-            isNew: car.isNew,
             isSale: car.isSale,
             isAirConditioning: car.isAirConditioning,
             saleAmount: car.saleAmount,
@@ -82,38 +73,15 @@ export class AddEditCarComponent implements OnInit {
         }
       });
   }
-  /* onMainFormChanged(mainFormGroup: FormGroup) {
-    this.isMainCarFormValid = mainFormGroup.valid;
-    if (mainFormGroup.valid) {
-      this.currentTrim = mainFormGroup.controls['trim'].value;
-      this.mainCar = mainFormGroup.value;
-      this.apiCarParams = this.getApiCarParams(
-        mainFormGroup.controls['trim'].value,
-      );
-    }
-  } */
-  /* getApiCarParams(trim) {
-    return this.carFormDataService.getCarParamsByTrim(trim);
-  } */
-  /* onApiFormChanged(apiFormGroup: FormGroup) {
-    this.isApiCarFormValid = apiFormGroup.valid;
-    this.apiCar = apiFormGroup.value;
-  } */
-  /* onCustomFormChanged(customFormGroup: FormGroup) {
-    this.isCustomCarFormValid = customFormGroup.valid;
-    if (customFormGroup.valid) {
-      this.customCar = customFormGroup.value;
-      console.log(this.customCar);
-    }
-  } */
-  onReset() {
-    console.log('reset form');
-  }
+
+  onReset() {}
   onSubmit() {
-    this.customCar.fileImages.forEach((image, i) => {
-      image.name = this.mainCar.make + '_' + this.mainCar.model + '_0' + i;
-      console.log(image);
-      this.upload$[i] = this.adminCarService
+    console.log('submit start');
+    const upload$ = [null];
+    this.editCar['fileImages'].forEach((image, i) => {
+      image.name =
+        this.editCar.make + '_' + this.editCar.model + '_0' + i + '.jpg';
+      upload$[i] = this.adminCarService
         .uploadCarImage(image)
         .map(uploadTask => {
           return {
@@ -123,32 +91,56 @@ export class AddEditCarComponent implements OnInit {
           };
         });
     });
-    const imagesLinks = zip(...this.upload$);
+    const imagesLinks = zip(...upload$);
+    console.log('submit 2');
+
     imagesLinks.subscribe(res => {
-      delete this.customCar.fileImages;
-      const currentCar: Car1 = {
-        ...new Car1(),
-        ...this.mainCar,
-        ...this.apiCar,
-        ...this.customCar,
-        images: res,
-      };
-      this.adminCarService.createCar(currentCar).then(res => {
-        console.log('carAdded');
+      delete this.editCar['fileImages'];
+      this.editCar['images'] = res as [
+        {
+          id?: string;
+          name: string;
+          url: string;
+          isDefault: string;
+        }
+      ];
+      console.log('submit', this.editCar);
+
+      this.adminCarService.createCar(this.editCar).then(() => {
+        this.editCar = null;
         this.mainCar = null;
-        this.apiCar = null;
-        this.customCar = null;
+        this.isShowApiForm = false;
+        this.isShowCustomForm = false;
+        this.isCarFormValid = false;
       });
     });
   }
   onMainCarFormChange(mainForm: FormGroup) {
     this.isShowApiForm = mainForm.valid;
     if (!this.isEditMode && mainForm.valid) {
-      console.log('getParamsByTrimm');
       this.apiCar = this.carFormDataService.getCarParamsByTrim(
         mainForm.controls['trim'].value,
       );
+      this.editCar = {
+        ...new Car1(),
+        ...mainForm.value,
+      };
+      console.log('mainForm filled', this.editCar);
     }
     this.isEditMode = false;
+  }
+  onApiCarFormChange(apiForm: FormGroup) {
+    this.isShowCustomForm = apiForm.valid;
+    if (apiForm.valid) {
+      this.editCar = { ...this.editCar, ...apiForm.value };
+      console.log('apiForm filled', this.editCar);
+    }
+  }
+  onCustomCarFormChange(customForm: FormGroup) {
+    this.isCarFormValid = customForm.valid;
+    if (customForm.valid) {
+      this.editCar = { ...this.editCar, ...customForm.value };
+      console.log('customform filled', this.editCar);
+    }
   }
 }

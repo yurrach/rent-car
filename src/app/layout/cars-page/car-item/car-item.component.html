@@ -1,5 +1,4 @@
-  <span *ngIf="carItem.isSale" class="badge badge_sale">Sale 10%</span>
-  <span *ngIf="carItem.isNew" class="badge badge_new">New</span>
+  <span *ngIf="carItem.isSale" class="badge badge_sale">Sale {{carItem.saleAmount}}%</span>
   <img class="card__img" [src]="carItem.images[0]?.url" alt="Card image cap">
   <div class="card__body">
     <a [routerLink]="['/cars', carItem.id]">

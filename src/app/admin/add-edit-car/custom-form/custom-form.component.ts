@@ -27,7 +27,7 @@ export class CustomFormComponent implements OnInit {
   imageFileList: File[] = [];
   uploadProgress = [];
   currentUpload: Upload[] = [];
-  @Output() onCustomFormFilled = new EventEmitter<FormGroup>(true);
+  @Output() onCustomCarFormChange = new EventEmitter<FormGroup>(true);
 
   constructor(
     private fb: FormBuilder,
@@ -38,7 +38,7 @@ export class CustomFormComponent implements OnInit {
   ngOnInit() {
     this.createCustomCarForm();
     this.customCarForm.valueChanges.subscribe(() => {
-      this.onCustomFormFilled.emit(this.customCarForm);
+      this.onCustomCarFormChange.emit(this.customCarForm);
     });
     if (this.customCar) {
       this.customCarForm.patchValue(this.customCar);
@@ -50,7 +50,6 @@ export class CustomFormComponent implements OnInit {
 
   createCustomCarForm() {
     this.customCarForm = this.fb.group({
-      isNew: [true],
       isAirConditioning: [false],
       isSale: [false],
       saleAmount: [null],
