@@ -30,7 +30,7 @@ export class CarFormDataService {
     }
     return Observable.of(yearsList);
   }
-  private getYearsList(startYear): number[] {
+  public getYearsList(startYear): number[] {
     const yearsList = [];
     const endYear = new Date().getFullYear();
     for (let i = startYear; i <= endYear; i++) {

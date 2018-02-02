@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { AdminCarService } from '../shared/services/admin-car.service';
-import { Observable } from 'rxjs/Observable';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarFormDataService } from '../shared/services/car-form-data.service';
 import { CarFormParam } from '../shared/models/car-form-param.model';
-import 'rxjs/add/operator/do';
-import { Car1 } from '../../shared/models/car.model';
-import * as firebase from 'firebase';
-import { zip } from 'rxjs/observable/zip';
+import { mainCarFormParams } from '../shared/data/main-form';
+import { apiCarFormParams } from '../shared/data/api-form';
 import { ActivatedRoute, Params } from '@angular/router';
+import { AdminCarService } from '../shared/services/admin-car.service';
+import { Observable } from 'rxjs/Observable';
+import { Car1 } from '../../shared/models/car.model';
+import 'rxjs/add/operator/zip';
 
 @Component({
   selector: 'crayf-add-edit-car',
@@ -16,7 +16,153 @@ import { ActivatedRoute, Params } from '@angular/router';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
-  isEditMode = false;
+  carForm: FormGroup;
+  mainCarForm: FormGroup;
+  apiCarForm: FormGroup;
+  customCarForm: FormGroup;
+  mainCarFormParams: Array<CarFormParam>;
+  apiCarFormParams: Array<CarFormParam>;
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private formService: CarFormDataService,
+    private adminCarService: AdminCarService,
+  ) {}
+  ngOnInit() {
+    this.createCarForm();
+    this.route.params
+      .mergeMap((params: Params) => {
+        if (params.id) {
+          return this.adminCarService.getCarById$(params.id);
+        } else {
+          return Observable.of(null);
+        }
+      })
+      .subscribe((car: Car1) => {
+        if (car) {
+          this.mainCarForm.patchValue(car);
+          this.apiCarForm.patchValue(car);
+          this.customCarForm.patchValue(car);
+          this.mainCarFormParams
+            .filter(param => param.name !== 'year')
+            .forEach(param => {
+              this.getOptionsList(param);
+            });
+        }
+        this.mainCarFormParams[0].isShow = true;
+      });
+  }
+  ngOnDestroy() {
+    this.mainCarFormParams.forEach(param => {
+      this.resetOptionsList(param);
+    });
+  }
+
+  createCarForm() {
+    this.createMainCarForm();
+    this.createApiCarForm();
+    this.createCustomCarForm();
+    this.carForm = this.fb.group({
+      main: this.mainCarForm,
+      api: this.apiCarForm,
+      custom: this.customCarForm,
+    });
+  }
+  createMainCarForm() {
+    this.mainCarFormParams = mainCarFormParams;
+    this.mainCarFormParams[0].optionsList = this.formService.getYearsList(2000);
+    const mainConfig = this.formService.getFormControlConfig(
+      this.mainCarFormParams,
+    );
+    this.mainCarForm = this.fb.group(mainConfig);
+  }
+  createApiCarForm() {
+    this.apiCarFormParams = apiCarFormParams;
+    const apiConfig = this.formService.getFormControlConfig(
+      this.apiCarFormParams,
+    );
+    this.apiCarForm = this.fb.group(apiConfig);
+  }
+  createCustomCarForm() {
+    this.customCarForm = this.fb.group({
+      isAirConditioning: [false],
+      isSale: [false],
+      saleAmount: [null],
+      rentPrice: this.fb.array([]),
+      images: this.fb.array([]),
+      fileImages: this.fb.array([]),
+      additionalInfo: [null],
+    });
+  }
+  onMainFormChange(param: CarFormParam) {
+    param.value = this.mainCarForm.controls[param.name].value;
+    if (param.name === 'trim') {
+      this.fillApiFormFromApi(param.value);
+
+      return;
+    }
+    const currentIndex = this.mainCarFormParams.indexOf(param);
+    const nextIndex = currentIndex + 1;
+    const nextParam = this.mainCarFormParams[nextIndex];
+    const nextControl = this.mainCarForm.controls[nextParam.name];
+    if (nextControl.value) {
+      this.mainCarFormParams
+        .filter((param, i) => i >= nextIndex)
+        .forEach(param => {
+          this.resetMainFormControl(param);
+          this.resetOptionsList(param);
+        });
+    }
+    this.getOptionsList(nextParam);
+    /* this.getOptionsList$(nextParam).subscribe(res => {
+      nextParam.optionsList = res;
+      nextParam.isShow = true;
+    }); */
+  }
+  getOptionsList(param: CarFormParam) {
+    this.getOptionsList$(param).subscribe(res => {
+      param.optionsList = res;
+      param.isShow = true;
+    });
+  }
+
+  resetMainFormControl(param: CarFormParam) {
+    this.mainCarForm.controls[param.name].reset('');
+    if (param.name !== 'year') {
+      param.isShow = false;
+    }
+  }
+  resetOptionsList(param: CarFormParam) {
+    param.optionsList = null;
+    param.isShow = false;
+  }
+
+  getOptionsList$(param: CarFormParam) {
+    return this.formService.getCarParamsList$(
+      this.mainCarForm.value,
+      param.listName,
+    );
+  }
+
+  fillApiFormFromApi(trim) {
+    const apiCar = this.formService.getCarParamsByTrim(trim);
+    this.apiCarForm.patchValue(apiCar);
+  }
+
+  onSubmit() {
+    console.log('submit form');
+    this.carForm.reset();
+  }
+  onReset() {
+    console.log('reset form');
+    this.apiCarForm.reset();
+    this.customCarForm.reset();
+    this.mainCarFormParams.forEach(param => {
+      this.resetMainFormControl(param);
+    });
+  }
+
+  /*   isEditMode = false;
   isShowApiForm = false;
   isShowCustomForm = false;
   isCarFormValid = false;
@@ -142,5 +288,5 @@ export class AddEditCarComponent implements OnInit {
       this.editCar = { ...this.editCar, ...customForm.value };
       console.log('customform filled', this.editCar);
     }
-  }
+  } */
 }
