@@ -16,6 +16,8 @@ import 'rxjs/add/operator/zip';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
+  isShowSelectLoader = false;
+  isShowPageLoader = false;
   carForm: FormGroup;
   mainCarForm: FormGroup;
   apiCarForm: FormGroup;
@@ -29,11 +31,12 @@ export class AddEditCarComponent implements OnInit {
     private adminCarService: AdminCarService,
   ) {}
   ngOnInit() {
+    this.isShowPageLoader = true;
     this.createCarForm();
     this.route.params
       .mergeMap((params: Params) => {
         if (params.id) {
-          return this.adminCarService.getCarById$(params.id);
+          return this.adminCarService.getCarById$(params.id).delay(1000);
         } else {
           return Observable.of(null);
         }
@@ -50,6 +53,7 @@ export class AddEditCarComponent implements OnInit {
             });
         }
         this.mainCarFormParams[0].isShow = true;
+        this.isShowPageLoader = false;
       });
   }
   ngOnDestroy() {
@@ -120,17 +124,19 @@ export class AddEditCarComponent implements OnInit {
     }); */
   }
   getOptionsList(param: CarFormParam) {
+    this.isShowSelectLoader = true;
     this.getOptionsList$(param).subscribe(res => {
       param.optionsList = res;
       param.isShow = true;
+      this.isShowSelectLoader = false;
     });
   }
 
   resetMainFormControl(param: CarFormParam) {
     this.mainCarForm.controls[param.name].reset('');
-    if (param.name !== 'year') {
+    /* if (param.name !== 'year') {
       param.isShow = false;
-    }
+    } */
   }
   resetOptionsList(param: CarFormParam) {
     param.optionsList = null;
@@ -151,7 +157,7 @@ export class AddEditCarComponent implements OnInit {
 
   onSubmit() {
     console.log('submit form');
-    this.carForm.reset();
+    this.onReset();
   }
   onReset() {
     console.log('reset form');
@@ -159,7 +165,10 @@ export class AddEditCarComponent implements OnInit {
     this.customCarForm.reset();
     this.mainCarFormParams.forEach(param => {
       this.resetMainFormControl(param);
+      this.resetOptionsList(param);
     });
+    this.mainCarFormParams[0].isShow = true;
+    this.mainCarFormParams[0].optionsList = this.formService.getYearsList(2000);
   }
 
   /*   isEditMode = false;

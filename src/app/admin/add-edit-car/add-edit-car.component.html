@@ -1,4 +1,6 @@
-<form  class="form" novalidate [formGroup]="carForm" (ngSubmit)="onSubmit()">
+<form  class="form" novalidate
+[formGroup]="carForm" (ngSubmit)="onSubmit()"
+*ngIf="!isShowPageLoader">
   <fieldset formGroupName="main">
     <ng-container *ngFor="let param of mainCarFormParams; let i = index">
       <div *ngIf="param.isShow"
@@ -21,6 +23,9 @@
       </div>
     </ng-container>
   </fieldset>
+  <div class="loader" *ngIf="isShowSelectLoader">
+    <img src="../../../assets/img/loader.gif">
+  </div>
   <fieldset formGroupName="api" *ngIf="mainCarForm.valid">
     <ng-container *ngFor="let param of apiCarFormParams; let i = index">
       <div 
@@ -128,6 +133,9 @@
       </button>
     </div>
 </form>
+<div class="loader" *ngIf="isShowPageLoader">
+  <img src="../../../assets/img/loader.gif">
+</div>
   
   
   <!-- <crayf-main-form  [currentCar]="mainCar"
