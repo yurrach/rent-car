@@ -13,10 +13,20 @@ export class AdminCarService extends CarsService {
   ) {
     super(fbs);
   }
-  uploadCarImage(image) {
-    const upload = new Upload(image.file);
-    upload.name = image.name;
-    return this.uploadService.pushUpload('/cars-images', upload);
+  uploadCarImage(path, file: File) {
+    const upload = new Upload(file);
+    upload.name = file.name;
+    return this.uploadService
+      .pushUpload('/cars-images/' + path, upload)
+      .map(uplSnapshot => {
+        return {
+          url: uplSnapshot.downloadURL,
+          name: upload.name,
+        };
+      });
+  }
+  getRef(path) {
+    return this.fbs.getCollectionRef(path, this.carQueryFn);
   }
   updateCar(car: Car1) {
     return this.fbs.updateDoc('cars', car, this.carQueryFn);
@@ -24,11 +34,19 @@ export class AdminCarService extends CarsService {
   createCar(car) {
     return this.fbs.createDoc('cars', car, this.carQueryFn);
   }
+  createImage(image, id) {
+    const path = 'cars/' + id + '/images';
+
+    return this.fbs.createDoc(path, image, this.carQueryFn).map(ref => {
+      return ref;
+    });
+  }
   deleteCar(car: Car1) {
     console.log(car);
     const images = car.images;
+    const path = '/cars-images/' + car.id;
     images.forEach(image => {
-      this.uploadService.deleteUpload('/cars-images', image.name).then(() => {
+      this.uploadService.deleteUpload(path, image.name).then(() => {
         console.log('delete', image.name);
       });
     });

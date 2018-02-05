@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ContentChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { CarFormDataService } from '../shared/services/car-form-data.service';
 import { CarFormParam } from '../shared/models/car-form-param.model';
@@ -8,7 +8,9 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { AdminCarService } from '../shared/services/admin-car.service';
 import { Observable } from 'rxjs/Observable';
 import { Car1 } from '../../shared/models/car.model';
-import 'rxjs/add/operator/zip';
+import { PreviewImagesComponent } from './preview-images/preview-images.component';
+import { zip } from 'rxjs/observable/zip';
+import { FirebaseApiService } from '../../shared/core/firebase-api.service';
 
 @Component({
   selector: 'crayf-add-edit-car',
@@ -16,6 +18,14 @@ import 'rxjs/add/operator/zip';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
+  @ContentChild(PreviewImagesComponent) previewImg: PreviewImagesComponent;
+  carImgFiles: Array<File>;
+  previewImgs: [
+    {
+      url: string;
+      name: string;
+    }
+  ];
   isShowSelectLoader = false;
   isShowPageLoader = false;
   carForm: FormGroup;
@@ -29,6 +39,7 @@ export class AddEditCarComponent implements OnInit {
     private route: ActivatedRoute,
     private formService: CarFormDataService,
     private adminCarService: AdminCarService,
+    public fbs: FirebaseApiService,
   ) {}
   ngOnInit() {
     this.isShowPageLoader = true;
@@ -43,14 +54,16 @@ export class AddEditCarComponent implements OnInit {
       })
       .subscribe((car: Car1) => {
         if (car) {
+          console.log(car);
           this.mainCarForm.patchValue(car);
           this.apiCarForm.patchValue(car);
           this.customCarForm.patchValue(car);
-          this.mainCarFormParams
-            .filter(param => param.name !== 'year')
-            .forEach(param => {
+          this.previewImgs = car.images;
+          this.mainCarFormParams.forEach(param => {
+            if (param.name !== 'year') {
               this.getOptionsList(param);
-            });
+            }
+          });
         }
         this.mainCarFormParams[0].isShow = true;
         this.isShowPageLoader = false;
@@ -118,10 +131,6 @@ export class AddEditCarComponent implements OnInit {
         });
     }
     this.getOptionsList(nextParam);
-    /* this.getOptionsList$(nextParam).subscribe(res => {
-      nextParam.optionsList = res;
-      nextParam.isShow = true;
-    }); */
   }
   getOptionsList(param: CarFormParam) {
     this.isShowSelectLoader = true;
@@ -134,9 +143,6 @@ export class AddEditCarComponent implements OnInit {
 
   resetMainFormControl(param: CarFormParam) {
     this.mainCarForm.controls[param.name].reset('');
-    /* if (param.name !== 'year') {
-      param.isShow = false;
-    } */
   }
   resetOptionsList(param: CarFormParam) {
     param.optionsList = null;
@@ -157,6 +163,7 @@ export class AddEditCarComponent implements OnInit {
 
   onSubmit() {
     console.log('submit form');
+    this.createCar();
     this.onReset();
   }
   onReset() {
@@ -169,6 +176,74 @@ export class AddEditCarComponent implements OnInit {
     });
     this.mainCarFormParams[0].isShow = true;
     this.mainCarFormParams[0].optionsList = this.formService.getYearsList(2000);
+  }
+
+  addImages(target: HTMLInputElement) {
+    const files: Array<File> = Array.prototype.slice.call(target.files);
+    const imgFileNameObj = {};
+    if (!this.carImgFiles) {
+      this.carImgFiles = [];
+    }
+    if (this.carImgFiles) {
+      this.carImgFiles.forEach(file => {
+        imgFileNameObj[file.name] = true;
+      });
+    }
+    files.forEach(file => {
+      if (imgFileNameObj[file.name]) {
+        return;
+      }
+      this.carImgFiles.push(file);
+      this.transformToDataUrl(file);
+    });
+  }
+  transformToDataUrl(file: File) {
+    const index = this.carImgFiles.indexOf(file);
+    if (!this.previewImgs) {
+      this.previewImgs = [] as [{ url: string; name: string }];
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const img = {
+        url: reader.result,
+        name: file.name,
+      };
+      this.previewImgs[index] = img;
+    };
+  }
+  deleteImage(i: number) {
+    this.previewImgs.splice(i, 1);
+    if (this.carImgFiles) {
+      this.carImgFiles.splice(i, 1);
+    }
+  }
+  createCar() {
+    const car: Car1 = {
+      ...new Car1(),
+      ...this.mainCarForm.value,
+      ...this.apiCarForm.value,
+      ...this.customCarForm.value,
+    };
+    const upload$: [Observable<any>] = [] as [Observable<any>];
+    this.adminCarService
+      .createCar(car)
+      .mergeMap(carRef => {
+        console.log(carRef);
+        car.id = carRef.id;
+        this.carImgFiles.forEach(file => {
+          upload$.push(this.adminCarService.uploadCarImage(car.id, file));
+        });
+        return zip(...upload$);
+      })
+      .subscribe(res => {
+        car.images = res as [{ name: string; url: string; isDefault: string }];
+        console.log(res);
+
+        this.adminCarService.updateCar(car);
+        this.carImgFiles = null;
+        this.previewImgs = null;
+      });
   }
 
   /*   isEditMode = false;

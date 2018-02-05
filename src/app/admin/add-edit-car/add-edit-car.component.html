@@ -85,32 +85,15 @@
         </div>
       </div>
     </div> -->
-    <div class="car-images">
-      <h3 class="car-images__heading">Загрузите фото автомобиля:</h3>
-      
-      <div class="car-images__row">
-        <!-- <div class="car-images__preview"
-        *ngFor="let src of previewImageSrc; let i=index">
-          <img class="car-images__img"
-          [ngClass]="{'default': this.customCarForm.controls['fileImages'].controls[i].get('isDefault').value}"
-          [src]="src"
-          >
-          <h6 class="car-images__heading">Progress: {{currentUpload[i]?.progress}}% Complete</h6>
-          <button class="btn btn_reset car-images__delete"
-          (click)="deleteImage(i)">х</button>
-          <button class="btn car-images__default"
-          (click)="setAsDefaultImage(i)">v</button>
-        </div> -->
-        <div class="car-images__group">
-          <label class="car-images__btn btn_submit"
-                for="image">
-            +Add photo
-          </label>
-          <input type="file" name="image"
-                  id="image" class="car-images__input"
-                  (change)="onImagesAdd($event)" multiple>
-        </div>
-      </div>
+    <crayf-preview-images [carImgFiles]="previewImgs" *ngIf="previewImgs"
+    (onDeleteImage)="deleteImage($event)">
+    </crayf-preview-images>
+    <div class="car-images__group">
+      <label class="car-images__btn btn_submit" for="image">
+        +Add photo
+      </label>
+      <input type="file" name="image" id="image" class="car-images__input" multiple
+      (change)="addImages($event.target)">
     </div>
     <div class="form__group">
       <label class="form__label">

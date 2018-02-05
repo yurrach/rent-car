@@ -1,0 +1,19 @@
+<div class="car-images">
+  <h3 class="car-images__heading">Загрузите фото автомобиля:</h3>
+  <div class="car-images__row">
+    <div class="car-images__preview"
+    *ngFor="let img of carImgFiles; let i=index">
+      <img class="car-images__img"
+      *ngIf="img?.url"
+      [src]="img.url"
+      >
+      <h6 class="car-images__heading">Progress: % Complete</h6>
+      <button class="btn btn_reset car-images__delete"
+      (click)="deleteImage(i)">х</button>
+      <button class="btn car-images__default"
+      (click)="setAsDefaultImage(i)">v</button>
+    </div>
+    <!-- <ng-content></ng-content> -->
+  </div>
+</div>
+

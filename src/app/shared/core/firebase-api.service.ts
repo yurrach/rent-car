@@ -123,6 +123,15 @@ export class FirebaseApiService {
   } */
   // new
   public createDoc<T>(path: string, data: T, queryFn: QueryFn) {
+    const doc$ = Observable.fromPromise(
+      this.getCollectionRef(path, queryFn).add(data),
+    );
+    return doc$;
+  }
+  public createDoc1<T>(path: string, data: T, queryFn: QueryFn) {
+    const doc$ = Observable.fromPromise(
+      this.getCollectionRef(path, queryFn).add(data),
+    );
     return this.getCollectionRef(path, queryFn).add(data);
   }
   /*   public createDoc<T>(

@@ -11,6 +11,7 @@ import { AdminSharedModule } from './shared/admin-shared.module';
 import { MainFormComponent } from './add-edit-car/main-form/main-form.component';
 import { ApiFormComponent } from './add-edit-car/api-form/api-form.component';
 import { CustomFormComponent } from './add-edit-car/custom-form/custom-form.component';
+import { PreviewImagesComponent } from './add-edit-car/preview-images/preview-images.component';
 
 @NgModule({
   imports: [CommonModule, AdminRoutingModule, SharedModule, AdminSharedModule],
@@ -23,6 +24,7 @@ import { CustomFormComponent } from './add-edit-car/custom-form/custom-form.comp
     MainFormComponent,
     ApiFormComponent,
     CustomFormComponent,
+    PreviewImagesComponent,
   ],
 })
 export class AdminModule {}
