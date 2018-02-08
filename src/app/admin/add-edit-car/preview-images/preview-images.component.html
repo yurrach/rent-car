@@ -1,19 +1,18 @@
 <div class="car-images">
-  <h3 class="car-images__heading">Загрузите фото автомобиля:</h3>
   <div class="car-images__row">
     <div class="car-images__preview"
-    *ngFor="let img of carImgSrcList">
+    *ngFor="let img of carImgList">
       <img class="car-images__img"
       *ngIf="img?.src"
       [src]="img.src"
       >
-      <h6 class="car-images__heading">Progress: % Complete</h6>
+      <h6 class="car-images__heading"
+      *ngIf="img.progress">Progress: {{img.progress}}% Complete</h6>
       <button class="btn btn_reset car-images__delete"
       (click)="deleteImage(img)">х</button>
       <button class="btn car-images__default"
       (click)="setDefaultImage(img)">v</button>
     </div>
-    <!-- <ng-content></ng-content> -->
   </div>
 </div>
 

@@ -19,8 +19,10 @@ import { apiCarFormParams } from '../shared/data/api-form';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
-  carImgFileList: Array<File>;
-  carImgSrcList: Array<CarImage>;
+  carImgList: Array<CarImage>;
+  // carImgFileList: Array<File>;
+  // carImgSrcList: Array<CarImage>;
+  defaultCarImg: CarImage;
   isShowSelectLoader = false;
   isShowPageLoader = false;
   carForm: FormGroup;
@@ -49,7 +51,9 @@ export class AddEditCarComponent implements OnInit {
       .subscribe((car: Car1) => {
         this.createCarForm(car);
         if (car) {
-          this.carImgSrcList = car.images;
+          this.initCarImgList(car);
+          // this.carImgList = car.images;
+          // this.defaultCarImg = car.defaultImage;
           this.mainCarFormParams.forEach(param => {
             param.value = car[param.name];
             this.getOptionsList(param);
@@ -61,6 +65,16 @@ export class AddEditCarComponent implements OnInit {
         }
         this.isShowPageLoader = false;
       });
+  }
+  initCarImgList(car: Car1) {
+    let defaultCarName = null;
+    if (car.defaultImage) {
+      defaultCarName = car.defaultImage.name;
+    }
+    this.carImgList = car.images.map(img => {
+      img.isDefault = img.name === defaultCarName;
+      return img;
+    });
   }
   ngOnDestroy() {
     this.mainCarFormParams.forEach(param => {
@@ -104,8 +118,6 @@ export class AddEditCarComponent implements OnInit {
       isSale: false,
       saleAmount: null,
       rentPrice: this.fb.array([]),
-      defaultImg: [null, Validators.required],
-      images: this.fb.array([]),
       additionalInfo: [null, Validators.required],
     });
     if (car) {
@@ -165,8 +177,9 @@ export class AddEditCarComponent implements OnInit {
   }
 
   onSubmit() {
+    // this.isShowPageLoader = true;
     this.createCar();
-    this.onReset();
+    // this.onReset();
   }
   onReset() {
     this.carForm.reset();
@@ -180,11 +193,11 @@ export class AddEditCarComponent implements OnInit {
   addImages(target: HTMLInputElement) {
     const files: Array<File> = Array.prototype.slice.call(target.files);
     const fileNameObj = {};
-    if (!this.carImgFileList) {
-      this.carImgFileList = [];
+    if (!this.carImgList) {
+      this.carImgList = [];
     }
-    if (this.carImgFileList) {
-      this.carImgFileList.forEach(file => {
+    if (this.carImgList) {
+      this.carImgList.forEach(file => {
         fileNameObj[file.name] = true;
       });
     }
@@ -192,35 +205,29 @@ export class AddEditCarComponent implements OnInit {
       if (fileNameObj[file.name]) {
         return;
       }
-      this.carImgFileList.push(file);
-      this.transformToDataUrl(file);
+      const img: CarImage = {
+        name: file.name,
+        file: file,
+        progress: 0,
+      };
+      /// WTF!!!!!!!!
+      this.carImgList = [...this.carImgList, img];
+      // this.carImgList.push(img);
     });
   }
-  transformToDataUrl(file: File) {
-    const index = this.carImgFileList.indexOf(file);
-    if (!this.carImgSrcList) {
-      this.carImgSrcList = [];
-    }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const img: CarImage = {
-        src: reader.result,
-        name: file.name,
-      };
-      this.carImgSrcList[index] = img;
-    };
-  }
-  deleteImage(img: CarImage) {
-    const index = this.carImgSrcList.indexOf(img);
+  deleteImage(deletedImg: CarImage) {
+    this.carImgList = this.carImgList.filter(
+      img => img.name !== deletedImg.name,
+    );
+    /* const index = this.carImgSrcList.indexOf(img);
     this.carImgSrcList.splice(index, 1);
     if (this.carImgFileList) {
       this.carImgFileList.splice(index, 1);
-    }
+    } */
   }
-  setDefaultImage(img: CarImage) {
+  /* setDefaultImage(img: CarImage) {
     this.customCarForm.controls['defaultImg'].patchValue(img);
-  }
+  } */
   createCar() {
     const car: Car1 = {
       ...new Car1(),
@@ -228,22 +235,10 @@ export class AddEditCarComponent implements OnInit {
       ...this.apiCarForm.value,
       ...this.customCarForm.value,
     };
-    const upload$: [Observable<any>] = [] as [Observable<any>];
-    this.adminCarService
-      .createCar(car)
-      .mergeMap(carRef => {
-        car.id = carRef.id;
-        this.carImgFileList.forEach(file => {
-          upload$.push(this.adminCarService.uploadCarImage(car.id, file));
-        });
-        return zip(...upload$);
-      })
-      .subscribe((res: [CarImage]) => {
-        car.images = res;
-
-        this.adminCarService.updateCar(car);
-        this.carImgFileList = null;
-        this.carImgSrcList = null;
-      });
+    this.adminCarService.createCar(car, this.carImgList).subscribe(res => {
+      this.carImgList = null;
+      this.isShowPageLoader = false;
+      this.onReset();
+    });
   }
 }

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/Observable';
 export class UploadService {
   constructor(private fbs: FirebaseApiService) {}
   uploads: AngularFirestoreCollection<Upload[]>;
-  pushUpload(basePath: string, upload: Upload) {
+  pushUpload(basePath: string, upload) {
     let storageRef = firebase.storage().ref();
     let uploadTask = storageRef
       .child(`${basePath}/${upload.name}`)

@@ -1,5 +1,5 @@
 <form  class="form" novalidate
-[formGroup]="carForm" (ngSubmit)="onSubmit()"
+[formGroup]="carForm" 
 *ngIf="!isShowPageLoader">
   <fieldset formGroupName="main">
     <ng-container *ngFor="let param of mainCarFormParams; let i = index">
@@ -85,9 +85,9 @@
         </div>
       </div>
     </div> -->
-    <crayf-preview-images [carImgSrcList]="carImgSrcList" *ngIf="carImgSrcList"
-    (onDeleteImage)="deleteImage($event)"
-    (onSetDefaultImg)="setDefaultImage($event)">
+    <h3 class="car-images__heading">Загрузите фото автомобиля:</h3>
+    <crayf-preview-images [carImgList]="carImgList" *ngIf="carImgList">
+    
     </crayf-preview-images>
     <div class="car-images__group">
       <label class="car-images__btn btn_submit" for="image">
@@ -107,6 +107,7 @@
   </fieldset>
   <div class="form__btn">
       <button class="btn btn_submit" type="submit" 
+      (click)="onSubmit()"
       *ngIf="carForm.valid"
       >
         Сохранить
