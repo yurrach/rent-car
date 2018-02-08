@@ -20,7 +20,7 @@ export class AdminCarService extends CarsService {
       .pushUpload('/cars-images/' + path, upload)
       .map(uplSnapshot => {
         return {
-          url: uplSnapshot.downloadURL,
+          src: uplSnapshot.downloadURL,
           name: upload.name,
         };
       });

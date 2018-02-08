@@ -1,3 +1,5 @@
+import { CarImage } from './car-image';
+
 export class Car {
   id?: string;
   make_display: string;
@@ -41,14 +43,8 @@ export class Car1 {
       price: number;
     }
   ];
-  images: [
-    {
-      id?: string;
-      name: string;
-      url: string;
-      isDefault: string;
-    }
-  ];
+  defaultImage: CarImage;
+  images: [CarImage];
   additionalInfo: string;
   createdAt: Date;
   constructor() {

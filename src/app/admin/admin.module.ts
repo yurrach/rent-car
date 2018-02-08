@@ -8,9 +8,6 @@ import { CarsComponent } from './cars/cars.component';
 import { AddEditCarComponent } from './add-edit-car/add-edit-car.component';
 import { SharedModule } from '../shared/shared.module';
 import { AdminSharedModule } from './shared/admin-shared.module';
-import { MainFormComponent } from './add-edit-car/main-form/main-form.component';
-import { ApiFormComponent } from './add-edit-car/api-form/api-form.component';
-import { CustomFormComponent } from './add-edit-car/custom-form/custom-form.component';
 import { PreviewImagesComponent } from './add-edit-car/preview-images/preview-images.component';
 
 @NgModule({
@@ -21,9 +18,6 @@ import { PreviewImagesComponent } from './add-edit-car/preview-images/preview-im
     SidebarComponent,
     CarsComponent,
     AddEditCarComponent,
-    MainFormComponent,
-    ApiFormComponent,
-    CustomFormComponent,
     PreviewImagesComponent,
   ],
 })

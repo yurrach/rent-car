@@ -3,7 +3,7 @@
 *ngIf="!isShowPageLoader">
   <fieldset formGroupName="main">
     <ng-container *ngFor="let param of mainCarFormParams; let i = index">
-      <div *ngIf="param.isShow"
+      <div *ngIf="param.optionsList || param.value"
             class="form__group">
         <label class="form__label" for="{{param.name}}">
           {{param.label}}
@@ -14,7 +14,7 @@
                 id="{{param.name}}"
                 (change)="onMainFormChange(param)"
                 >
-          <option value="">{{param.placeholder}}</option>
+          <option [value]="null">{{param.placeholder}}</option>
           <option *ngFor="let option of param.optionsList"
                   value="{{option}}">
             {{option}}
@@ -85,8 +85,9 @@
         </div>
       </div>
     </div> -->
-    <crayf-preview-images [carImgFiles]="previewImgs" *ngIf="previewImgs"
-    (onDeleteImage)="deleteImage($event)">
+    <crayf-preview-images [carImgSrcList]="carImgSrcList" *ngIf="carImgSrcList"
+    (onDeleteImage)="deleteImage($event)"
+    (onSetDefaultImg)="setDefaultImage($event)">
     </crayf-preview-images>
     <div class="car-images__group">
       <label class="car-images__btn btn_submit" for="image">
@@ -117,6 +118,7 @@
     </div>
 </form>
 <div class="loader" *ngIf="isShowPageLoader">
+  <img src="../../../assets/img/loader.gif">
   <img src="../../../assets/img/loader.gif">
 </div>
   

@@ -1,16 +1,17 @@
 import { Component, OnInit, ContentChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+import { zip } from 'rxjs/observable/zip';
+
+import { AdminCarService } from '../shared/services/admin-car.service';
 import { CarFormDataService } from '../shared/services/car-form-data.service';
+
+import { Car1 } from '../../shared/models/car.model';
+import { CarImage } from '../../shared/models/car-image';
 import { CarFormParam } from '../shared/models/car-form-param.model';
 import { mainCarFormParams } from '../shared/data/main-form';
 import { apiCarFormParams } from '../shared/data/api-form';
-import { ActivatedRoute, Params } from '@angular/router';
-import { AdminCarService } from '../shared/services/admin-car.service';
-import { Observable } from 'rxjs/Observable';
-import { Car1 } from '../../shared/models/car.model';
-import { PreviewImagesComponent } from './preview-images/preview-images.component';
-import { zip } from 'rxjs/observable/zip';
-import { FirebaseApiService } from '../../shared/core/firebase-api.service';
 
 @Component({
   selector: 'crayf-add-edit-car',
@@ -18,14 +19,8 @@ import { FirebaseApiService } from '../../shared/core/firebase-api.service';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
-  @ContentChild(PreviewImagesComponent) previewImg: PreviewImagesComponent;
-  carImgFiles: Array<File>;
-  previewImgs: [
-    {
-      url: string;
-      name: string;
-    }
-  ];
+  carImgFileList: Array<File>;
+  carImgSrcList: Array<CarImage>;
   isShowSelectLoader = false;
   isShowPageLoader = false;
   carForm: FormGroup;
@@ -39,11 +34,10 @@ export class AddEditCarComponent implements OnInit {
     private route: ActivatedRoute,
     private formService: CarFormDataService,
     private adminCarService: AdminCarService,
-    public fbs: FirebaseApiService,
   ) {}
+
   ngOnInit() {
     this.isShowPageLoader = true;
-    this.createCarForm();
     this.route.params
       .mergeMap((params: Params) => {
         if (params.id) {
@@ -53,19 +47,18 @@ export class AddEditCarComponent implements OnInit {
         }
       })
       .subscribe((car: Car1) => {
+        this.createCarForm(car);
         if (car) {
-          console.log(car);
-          this.mainCarForm.patchValue(car);
-          this.apiCarForm.patchValue(car);
-          this.customCarForm.patchValue(car);
-          this.previewImgs = car.images;
+          this.carImgSrcList = car.images;
           this.mainCarFormParams.forEach(param => {
-            if (param.name !== 'year') {
-              this.getOptionsList(param);
-            }
+            param.value = car[param.name];
+            this.getOptionsList(param);
           });
         }
-        this.mainCarFormParams[0].isShow = true;
+        if (!car) {
+          const param = this.mainCarFormParams[0];
+          this.getOptionsList(param);
+        }
         this.isShowPageLoader = false;
       });
   }
@@ -75,48 +68,54 @@ export class AddEditCarComponent implements OnInit {
     });
   }
 
-  createCarForm() {
-    this.createMainCarForm();
-    this.createApiCarForm();
-    this.createCustomCarForm();
+  createCarForm(car?: Car1) {
+    this.createMainCarForm(car);
+    this.createApiCarForm(car);
+    this.createCustomCarForm(car);
     this.carForm = this.fb.group({
       main: this.mainCarForm,
       api: this.apiCarForm,
       custom: this.customCarForm,
     });
   }
-  createMainCarForm() {
+  createMainCarForm(car?: Car1) {
     this.mainCarFormParams = mainCarFormParams;
-    this.mainCarFormParams[0].optionsList = this.formService.getYearsList(2000);
     const mainConfig = this.formService.getFormControlConfig(
       this.mainCarFormParams,
     );
     this.mainCarForm = this.fb.group(mainConfig);
+    if (car) {
+      this.mainCarForm.patchValue(car);
+    }
   }
-  createApiCarForm() {
+  createApiCarForm(car?: Car1) {
     this.apiCarFormParams = apiCarFormParams;
     const apiConfig = this.formService.getFormControlConfig(
       this.apiCarFormParams,
     );
     this.apiCarForm = this.fb.group(apiConfig);
+    if (car) {
+      this.apiCarForm.patchValue(car);
+    }
   }
-  createCustomCarForm() {
+  createCustomCarForm(car?: Car1) {
     this.customCarForm = this.fb.group({
-      isAirConditioning: [false],
-      isSale: [false],
-      saleAmount: [null],
+      isAirConditioning: false,
+      isSale: false,
+      saleAmount: null,
       rentPrice: this.fb.array([]),
+      defaultImg: [null, Validators.required],
       images: this.fb.array([]),
-      fileImages: this.fb.array([]),
-      additionalInfo: [null],
+      additionalInfo: [null, Validators.required],
     });
+    if (car) {
+      this.customCarForm.patchValue(car);
+    }
   }
   onMainFormChange(param: CarFormParam) {
     param.value = this.mainCarForm.controls[param.name].value;
     if (param.name === 'trim') {
-      this.fillApiFormFromApi(param.value);
-
-      return;
+      return this.fillApiFormByTrim(param.value);
     }
     const currentIndex = this.mainCarFormParams.indexOf(param);
     const nextIndex = currentIndex + 1;
@@ -134,89 +133,93 @@ export class AddEditCarComponent implements OnInit {
   }
   getOptionsList(param: CarFormParam) {
     this.isShowSelectLoader = true;
-    this.getOptionsList$(param).subscribe(res => {
-      param.optionsList = res;
-      param.isShow = true;
+    if (param.name === 'year') {
+      param.optionsList = this.formService.getYearsList(2000);
       this.isShowSelectLoader = false;
-    });
+    } else {
+      this.getOptionsList$(param).subscribe(res => {
+        param.optionsList = res;
+        this.isShowSelectLoader = false;
+      });
+    }
   }
-
+  getOptionsList$(param: CarFormParam) {
+    const queryParams = {
+      year: this.mainCarForm.controls['year'].value,
+      make: this.mainCarForm.controls['make'].value,
+      model: this.mainCarForm.controls['model'].value,
+    };
+    return this.formService.getSelectOptionsList$(queryParams, param.listName);
+  }
   resetMainFormControl(param: CarFormParam) {
-    this.mainCarForm.controls[param.name].reset('');
+    this.mainCarForm.controls[param.name].reset(null);
   }
   resetOptionsList(param: CarFormParam) {
+    param.value = null;
     param.optionsList = null;
-    param.isShow = false;
   }
 
-  getOptionsList$(param: CarFormParam) {
-    return this.formService.getCarParamsList$(
-      this.mainCarForm.value,
-      param.listName,
-    );
-  }
-
-  fillApiFormFromApi(trim) {
+  fillApiFormByTrim(trim: string) {
     const apiCar = this.formService.getCarParamsByTrim(trim);
     this.apiCarForm.patchValue(apiCar);
   }
 
   onSubmit() {
-    console.log('submit form');
     this.createCar();
     this.onReset();
   }
   onReset() {
-    console.log('reset form');
-    this.apiCarForm.reset();
-    this.customCarForm.reset();
+    this.carForm.reset();
     this.mainCarFormParams.forEach(param => {
-      this.resetMainFormControl(param);
-      this.resetOptionsList(param);
+      if (param.name !== 'year') {
+        this.resetOptionsList(param);
+      }
     });
-    this.mainCarFormParams[0].isShow = true;
-    this.mainCarFormParams[0].optionsList = this.formService.getYearsList(2000);
   }
 
   addImages(target: HTMLInputElement) {
     const files: Array<File> = Array.prototype.slice.call(target.files);
-    const imgFileNameObj = {};
-    if (!this.carImgFiles) {
-      this.carImgFiles = [];
+    const fileNameObj = {};
+    if (!this.carImgFileList) {
+      this.carImgFileList = [];
     }
-    if (this.carImgFiles) {
-      this.carImgFiles.forEach(file => {
-        imgFileNameObj[file.name] = true;
+    if (this.carImgFileList) {
+      this.carImgFileList.forEach(file => {
+        fileNameObj[file.name] = true;
       });
     }
     files.forEach(file => {
-      if (imgFileNameObj[file.name]) {
+      if (fileNameObj[file.name]) {
         return;
       }
-      this.carImgFiles.push(file);
+      this.carImgFileList.push(file);
       this.transformToDataUrl(file);
     });
   }
   transformToDataUrl(file: File) {
-    const index = this.carImgFiles.indexOf(file);
-    if (!this.previewImgs) {
-      this.previewImgs = [] as [{ url: string; name: string }];
+    const index = this.carImgFileList.indexOf(file);
+    if (!this.carImgSrcList) {
+      this.carImgSrcList = [];
     }
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      const img = {
-        url: reader.result,
+      const img: CarImage = {
+        src: reader.result,
         name: file.name,
       };
-      this.previewImgs[index] = img;
+      this.carImgSrcList[index] = img;
     };
   }
-  deleteImage(i: number) {
-    this.previewImgs.splice(i, 1);
-    if (this.carImgFiles) {
-      this.carImgFiles.splice(i, 1);
+  deleteImage(img: CarImage) {
+    const index = this.carImgSrcList.indexOf(img);
+    this.carImgSrcList.splice(index, 1);
+    if (this.carImgFileList) {
+      this.carImgFileList.splice(index, 1);
     }
+  }
+  setDefaultImage(img: CarImage) {
+    this.customCarForm.controls['defaultImg'].patchValue(img);
   }
   createCar() {
     const car: Car1 = {
@@ -229,148 +232,18 @@ export class AddEditCarComponent implements OnInit {
     this.adminCarService
       .createCar(car)
       .mergeMap(carRef => {
-        console.log(carRef);
         car.id = carRef.id;
-        this.carImgFiles.forEach(file => {
+        this.carImgFileList.forEach(file => {
           upload$.push(this.adminCarService.uploadCarImage(car.id, file));
         });
         return zip(...upload$);
       })
-      .subscribe(res => {
-        car.images = res as [{ name: string; url: string; isDefault: string }];
-        console.log(res);
+      .subscribe((res: [CarImage]) => {
+        car.images = res;
 
         this.adminCarService.updateCar(car);
-        this.carImgFiles = null;
-        this.previewImgs = null;
+        this.carImgFileList = null;
+        this.carImgSrcList = null;
       });
   }
-
-  /*   isEditMode = false;
-  isShowApiForm = false;
-  isShowCustomForm = false;
-  isCarFormValid = false;
-  editCar: Car1;
-  public carForm: FormGroup;
-  mainCar;
-  apiCar;
-  customCar;
-
-  private carImages: FormArray;
-
-  constructor(
-    private fb: FormBuilder,
-    private adminCarService: AdminCarService,
-    private carFormDataService: CarFormDataService,
-    private route: ActivatedRoute,
-  ) {}
-
-  ngOnInit() {
-    this.route.params
-      .mergeMap((params: Params) => {
-        if (params.id) {
-          return this.adminCarService.getCarById$(params.id);
-        } else {
-          return Observable.of(null);
-        }
-      })
-      .subscribe((car: Car1) => {
-        if (car) {
-          this.isEditMode = true;
-          this.mainCar = {
-            year: car.year,
-            make: car.make,
-            model: car.model,
-            trim: car.trim,
-          };
-          this.apiCar = {
-            drive: car.drive,
-            transmissionType: car.transmissionType,
-            engineCc: car.engineCc,
-            engineFuel: car.engineFuel,
-            lkmMixed: car.lkmMixed,
-            body: car.body,
-            seats: car.seats,
-          };
-          this.customCar = {
-            isSale: car.isSale,
-            isAirConditioning: car.isAirConditioning,
-            saleAmount: car.saleAmount,
-            rentPrice: car.rentPrice,
-            images: car.images,
-            additionalInfo: car.additionalInfo,
-          };
-        }
-      });
-  }
-
-  onReset() {}
-  onSubmit() {
-    console.log('submit start');
-    const upload$ = [null];
-    this.editCar['fileImages'].forEach((image, i) => {
-      image.name =
-        this.editCar.make + '_' + this.editCar.model + '_0' + i + '.jpg';
-      upload$[i] = this.adminCarService
-        .uploadCarImage(image)
-        .map(uploadTask => {
-          return {
-            name: uploadTask.metadata.name,
-            url: uploadTask.downloadURL,
-            isDefault: image.isDefault,
-          };
-        });
-    });
-    const imagesLinks = zip(...upload$);
-    console.log('submit 2');
-
-    imagesLinks.subscribe(res => {
-      delete this.editCar['fileImages'];
-      this.editCar['images'] = res as [
-        {
-          id?: string;
-          name: string;
-          url: string;
-          isDefault: string;
-        }
-      ];
-      console.log('submit', this.editCar);
-
-      this.adminCarService.createCar(this.editCar).then(() => {
-        this.editCar = null;
-        this.mainCar = null;
-        this.isShowApiForm = false;
-        this.isShowCustomForm = false;
-        this.isCarFormValid = false;
-      });
-    });
-  }
-  onMainCarFormChange(mainForm: FormGroup) {
-    this.isShowApiForm = mainForm.valid;
-    if (!this.isEditMode && mainForm.valid) {
-      this.apiCar = this.carFormDataService.getCarParamsByTrim(
-        mainForm.controls['trim'].value,
-      );
-      this.editCar = {
-        ...new Car1(),
-        ...mainForm.value,
-      };
-      console.log('mainForm filled', this.editCar);
-    }
-    this.isEditMode = false;
-  }
-  onApiCarFormChange(apiForm: FormGroup) {
-    this.isShowCustomForm = apiForm.valid;
-    if (apiForm.valid) {
-      this.editCar = { ...this.editCar, ...apiForm.value };
-      console.log('apiForm filled', this.editCar);
-    }
-  }
-  onCustomCarFormChange(customForm: FormGroup) {
-    this.isCarFormValid = customForm.valid;
-    if (customForm.valid) {
-      this.editCar = { ...this.editCar, ...customForm.value };
-      console.log('customform filled', this.editCar);
-    }
-  } */
 }

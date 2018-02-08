@@ -12,24 +12,6 @@ export class CarFormDataService {
 
   constructor(private http: HttpClient) {}
 
-  get mainCarFormParams(): CarFormParam[] {
-    mainCarFormParams[0].optionsList$ = this.getYearsList$(2000);
-    mainCarFormParams[0].optionsList = this.getYearsList(2000);
-    return mainCarFormParams;
-  }
-
-  get apiCarFormParams(): CarFormParam[] {
-    return apiCarFormParams;
-  }
-
-  private getYearsList$(startYear): Observable<number[]> {
-    const yearsList = [];
-    const endYear = new Date().getFullYear();
-    for (let i = startYear; i <= endYear; i++) {
-      yearsList.push(i);
-    }
-    return Observable.of(yearsList);
-  }
   public getYearsList(startYear): number[] {
     const yearsList = [];
     const endYear = new Date().getFullYear();
@@ -47,7 +29,7 @@ export class CarFormDataService {
     return formControlConfigObj;
   }
 
-  getQueryUrl({ year, make, model }, listName?) {
+  getQueryUrl({ year, make, model }, listName) {
     const baseApiUrl = `https://www.carqueryapi.com/api/0.3/?cmd=`;
     let query = '';
     let cmd = '';
@@ -67,25 +49,11 @@ export class CarFormDataService {
     return baseApiUrl + cmd + query;
   }
 
-  getCarParamsList$(dataQuery, listName) {
+  getSelectOptionsList$(dataQuery, listName) {
     const jsonpCallback = `callback`;
     const url = this.getQueryUrl(dataQuery, listName);
 
     return this.http.jsonp(url, jsonpCallback).map(res => {
-      if (res['error']) {
-        res = {
-          cars: [
-            {
-              make_display: 'Citroen',
-              model_name: 'C5',
-            },
-            {
-              make_display: 'Audi',
-              model_name: 'A6',
-            },
-          ],
-        };
-      }
       const paramsArray: [any] = Object.values(res)[0];
       if (listName === 'model_trim') {
         this.currentCarParams = paramsArray;
@@ -93,11 +61,12 @@ export class CarFormDataService {
       return paramsArray.map(param => param[listName]);
     });
   }
+
   getCarParamsByTrim(trim) {
-    const params = this.currentCarParams.filter(
+    const params = this.currentCarParams.find(
       car => car['model_trim'] === trim,
-    )[0];
-    return {
+    );
+    const carParamsByTrim = {
       drive: params.model_drive,
       transmissionType: params.model_transmission_type,
       engineCc: params.model_engine_cc,
@@ -106,5 +75,6 @@ export class CarFormDataService {
       body: params.model_body,
       seats: params.model_seats,
     };
+    return carParamsByTrim;
   }
 }
