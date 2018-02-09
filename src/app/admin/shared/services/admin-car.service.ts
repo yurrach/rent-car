@@ -26,14 +26,19 @@ export class AdminCarService extends CarsService {
         };
       });
   }
-  updateCar(car: Car1) {
-    return this.fbs.updateDoc('cars', car, this.carQueryFn);
-  }
-  createCar(car: Car1, imgList: Array<CarImage>) {
-    console.log(imgList);
-    const defaultImgName = imgList.find(img => img.isDefault).name;
+  createCar(car: Car1) {
     let carId;
-    const upload$: [Observable<any>] = [] as [Observable<any>];
+    let defaultImgName;
+    const imgList = car.images;
+    const defaultImg = imgList.find(img => img.isDefault);
+    if (defaultImg) {
+      defaultImgName = defaultImg.name;
+    }
+    if (!defaultImg) {
+      defaultImgName = imgList[0].name;
+    }
+    delete car.images;
+    const upload$ = [] as [Observable<CarImage>];
     return this.fbs
       .createDoc('cars', car, this.carQueryFn)
       .mergeMap(carRef => {
@@ -54,19 +59,43 @@ export class AdminCarService extends CarsService {
         return Observable.fromPromise(carRef.update(data));
       });
   }
-  createImage(image, id) {
-    const path = 'cars/' + id + '/images';
+  updateCar(car: Car1) {
+    let upload$ = [] as [Observable<CarImage>];
+    const uploaded = [] as [CarImage];
+    const imgList = car.images;
+    const defaultImgName = imgList.find(img => img.isDefault).name;
+    imgList.forEach((img, index) => {
+      if (img.file) {
+        upload$.push(this.uploadCarImage(car.id, img));
+      }
+      if (!img.file) {
+        uploaded.push(img);
+      }
+    });
+    if (!upload$.length) {
+      upload$ = [Observable.of(null)] as [Observable<CarImage>];
+    }
+    return zip(...upload$).mergeMap(images => {
+      car.images = [...uploaded] as [CarImage];
+      if (images[0]) {
+        car.images = car.images.concat(images) as [CarImage];
+      }
+      car.defaultImage = car.images.find(img => img.name === defaultImgName);
+      console.log(car.defaultImage);
+      console.log(car.defaultImage);
 
-    return this.fbs.createDoc(path, image, this.carQueryFn).map(ref => {
-      return ref;
+      return Observable.fromPromise(this.fbs.updateDoc('cars', car));
     });
   }
   deleteCar(car: Car1) {
     const images = car.images;
-    const path = '/cars-images/' + car.id;
-    images.forEach(image => {
-      this.uploadService.deleteUpload(path, image.name).then(() => {});
+    images.forEach(img => {
+      this.deleteImage(car.id, img);
     });
     this.fbs.deleteDoc('cars', car);
+  }
+  deleteImage(carId: string, img: CarImage) {
+    const imgPath = '/cars-images/' + carId;
+    this.uploadService.deleteUpload(imgPath, img.name).then(() => {});
   }
 }

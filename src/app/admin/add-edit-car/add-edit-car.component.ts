@@ -1,7 +1,8 @@
-import { Component, OnInit, ContentChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 import { zip } from 'rxjs/observable/zip';
 
 import { AdminCarService } from '../shared/services/admin-car.service';
@@ -19,9 +20,10 @@ import { apiCarFormParams } from '../shared/data/api-form';
   styleUrls: ['./add-edit-car.component.scss'],
 })
 export class AddEditCarComponent implements OnInit {
+  sub1: Subscription;
+  currentCar: Car1;
+  updateMode = false;
   carImgList: Array<CarImage>;
-  // carImgFileList: Array<File>;
-  // carImgSrcList: Array<CarImage>;
   defaultCarImg: CarImage;
   isShowSelectLoader = false;
   isShowPageLoader = false;
@@ -36,11 +38,12 @@ export class AddEditCarComponent implements OnInit {
     private route: ActivatedRoute,
     private formService: CarFormDataService,
     private adminCarService: AdminCarService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
     this.isShowPageLoader = true;
-    this.route.params
+    this.sub1 = this.route.params
       .mergeMap((params: Params) => {
         if (params.id) {
           return this.adminCarService.getCarById$(params.id).delay(1000);
@@ -51,15 +54,16 @@ export class AddEditCarComponent implements OnInit {
       .subscribe((car: Car1) => {
         this.createCarForm(car);
         if (car) {
+          this.currentCar = car;
+          this.updateMode = true;
           this.initCarImgList(car);
-          // this.carImgList = car.images;
-          // this.defaultCarImg = car.defaultImage;
           this.mainCarFormParams.forEach(param => {
             param.value = car[param.name];
             this.getOptionsList(param);
           });
         }
         if (!car) {
+          this.currentCar = new Car1();
           const param = this.mainCarFormParams[0];
           this.getOptionsList(param);
         }
@@ -80,6 +84,9 @@ export class AddEditCarComponent implements OnInit {
     this.mainCarFormParams.forEach(param => {
       this.resetOptionsList(param);
     });
+    if (this.sub1) {
+      this.sub1.unsubscribe();
+    }
   }
 
   createCarForm(car?: Car1) {
@@ -177,9 +184,24 @@ export class AddEditCarComponent implements OnInit {
   }
 
   onSubmit() {
-    // this.isShowPageLoader = true;
-    this.createCar();
-    // this.onReset();
+    const car: Car1 = {
+      ...this.currentCar,
+      ...this.mainCarForm.value,
+      ...this.apiCarForm.value,
+      ...this.customCarForm.value,
+      images: this.carImgList,
+    };
+    if (this.updateMode) {
+      this.currentCar.images.forEach(img => {
+        if (!this.carImgList.includes(img)) {
+          // console.log('delete', img);
+          this.adminCarService.deleteImage(car.id, img);
+        }
+      });
+      this.updateCar(car);
+      return;
+    }
+    this.createCar(car);
   }
   onReset() {
     this.carForm.reset();
@@ -219,26 +241,18 @@ export class AddEditCarComponent implements OnInit {
     this.carImgList = this.carImgList.filter(
       img => img.name !== deletedImg.name,
     );
-    /* const index = this.carImgSrcList.indexOf(img);
-    this.carImgSrcList.splice(index, 1);
-    if (this.carImgFileList) {
-      this.carImgFileList.splice(index, 1);
-    } */
   }
-  /* setDefaultImage(img: CarImage) {
-    this.customCarForm.controls['defaultImg'].patchValue(img);
-  } */
-  createCar() {
-    const car: Car1 = {
-      ...new Car1(),
-      ...this.mainCarForm.value,
-      ...this.apiCarForm.value,
-      ...this.customCarForm.value,
-    };
-    this.adminCarService.createCar(car, this.carImgList).subscribe(res => {
+  createCar(car: Car1) {
+    this.adminCarService.createCar(car).subscribe(res => {
       this.carImgList = null;
       this.isShowPageLoader = false;
       this.onReset();
+    });
+  }
+  updateCar(car: Car1) {
+    this.adminCarService.updateCar(car).subscribe(res => {
+      console.log('update car', res);
+      this.router.navigate(['admin/cars']);
     });
   }
 }

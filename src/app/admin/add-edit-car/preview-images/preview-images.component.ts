@@ -16,14 +16,11 @@ import { CarImage } from '../../../shared/models/car-image';
 })
 export class PreviewImagesComponent implements OnInit {
   @Input() carImgList: [CarImage];
-  // @Output() onDeleteImage = new EventEmitter<CarImage>();
-  // @Output() onSetDefaultImg = new EventEmitter<CarImage>();
   constructor(private elementRef: ElementRef) {}
   carImg: [any];
 
   ngOnInit() {}
   ngOnChanges(changes: SimpleChanges) {
-    console.log(this.carImgList);
     this.carImgList.forEach(img => {
       if (img.file) {
         this.transformToDataUrl(img);
@@ -62,23 +59,10 @@ export class PreviewImagesComponent implements OnInit {
 
   transformToDataUrl(img: CarImage) {
     const index = this.carImgList.indexOf(img);
-    /* if (!this.carImgList) {
-      this.carImgList = [];
-    } */
     const reader = new FileReader();
     reader.readAsDataURL(img.file);
     reader.onload = () => {
       this.carImgList[index].src = reader.result;
     };
   }
-  /*   deleteImage(img: CarImage) {
-    const index = this.carImgSrcList.indexOf(img);
-    this.carImgSrcList.splice(index, 1);
-    if (this.carImgFileList) {
-      this.carImgFileList.splice(index, 1);
-    }
-  } */
-  /*   setDefaultImage(img: CarImage) {
-    this.customCarForm.controls['defaultImg'].patchValue(img);
-  } */
 }

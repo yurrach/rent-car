@@ -1,4 +1,5 @@
 <form  class="form" novalidate
+(ngSubmit)="onSubmit()"
 [formGroup]="carForm" 
 *ngIf="!isShowPageLoader">
   <fieldset formGroupName="main">
@@ -105,16 +106,27 @@
       </textarea>
     </div>
   </fieldset>
-  <div class="form__btn">
+  <div class="form__btn" *ngIf="!updateMode">
       <button class="btn btn_submit" type="submit" 
-      (click)="onSubmit()"
       *ngIf="carForm.valid"
       >
         Сохранить
       </button>
       <button class="btn btn_reset" (click)="onReset()"
+      type="reset"
       *ngIf="mainCarForm.controls['year'].value">
         Сбросить форму
+      </button>
+    </div>
+  <div class="form__btn" *ngIf="updateMode">
+      <button class="btn btn_submit" type="submit" 
+      *ngIf="carForm.valid"
+      >
+        Update
+      </button>
+      <button class="btn btn_reset" (click)="onReset()"
+      type="reset">
+        Reset to DB
       </button>
     </div>
 </form>

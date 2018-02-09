@@ -17,7 +17,6 @@ export class CarsComponent implements OnInit {
     });
   }
   deleteCar(car: Car1) {
-    console.log('delete', car.make);
     this.adminCarService.deleteCar(car);
   }
 }
