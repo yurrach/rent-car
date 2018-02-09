@@ -4,12 +4,12 @@ import { AuthService } from '../../../../shared/core/auth.service';
 @Component({
   selector: 'crayf-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
   isAdmin = false;
 
-  constructor(private auth: AuthService) { }
+  constructor(public auth: AuthService) {}
 
   ngOnInit() {
     this.auth.user.subscribe(user => {
@@ -18,6 +18,4 @@ export class HeaderComponent implements OnInit {
       }
     });
   }
-
-
 }

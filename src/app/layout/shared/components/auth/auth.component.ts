@@ -4,14 +4,10 @@ import { AuthService } from '../../../../shared/core/auth.service';
 @Component({
   selector: 'crayf-auth',
   templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss']
+  styleUrls: ['./auth.component.scss'],
 })
 export class AuthComponent implements OnInit {
+  constructor(public auth: AuthService) {}
 
-  constructor(private auth: AuthService) { }
-
-  ngOnInit() {
-
-  }
-
+  ngOnInit() {}
 }

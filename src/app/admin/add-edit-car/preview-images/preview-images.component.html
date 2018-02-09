@@ -7,7 +7,7 @@
       [src]="img.src"
       >
       <h6 class="car-images__heading"
-      *ngIf="img.progress">Progress: {{img.progress}}% Complete</h6>
+      *ngIf="img.progress">{{img.progress | number:'1.0-0'}}%</h6>
       <button class="btn btn_reset car-images__delete"
       (click)="deleteImage(img)">х</button>
       <button class="btn car-images__default"

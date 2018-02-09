@@ -14,7 +14,6 @@ export class UploadService {
     let uploadTask = storageRef
       .child(`${basePath}/${upload.name}`)
       .put(upload.file);
-    // return Observable.fromPromise(uploadTask);
 
     uploadTask.on(
       firebase.storage.TaskEvent.STATE_CHANGED,

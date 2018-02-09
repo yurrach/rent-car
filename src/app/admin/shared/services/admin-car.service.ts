@@ -62,13 +62,10 @@ export class AdminCarService extends CarsService {
     });
   }
   deleteCar(car: Car1) {
-    console.log(car);
     const images = car.images;
     const path = '/cars-images/' + car.id;
     images.forEach(image => {
-      this.uploadService.deleteUpload(path, image.name).then(() => {
-        console.log('delete', image.name);
-      });
+      this.uploadService.deleteUpload(path, image.name).then(() => {});
     });
     this.fbs.deleteDoc('cars', car);
   }
