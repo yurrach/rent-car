@@ -81,9 +81,6 @@ export class AdminCarService extends CarsService {
         car.images = car.images.concat(images) as [CarImage];
       }
       car.defaultImage = car.images.find(img => img.name === defaultImgName);
-      console.log(car.defaultImage);
-      console.log(car.defaultImage);
-
       return Observable.fromPromise(this.fbs.updateDoc('cars', car));
     });
   }
